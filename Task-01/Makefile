@@ -1,27 +1,29 @@
-CC := g++
-SRCDIR := src
-OBJDIR := build
+# Makefile para compilar os arquivos src/mat.c e src/matop.c
 
-MAIN := program/matop.c
+CC = gcc
+CFLAGS = -Wall -Iinclude
+LDFLAGS = -lm
+SRCDIR = src
+BINDIR = bin
+OBJDIR = obj
+INCDIR = include
 
-SRCEXT := c
-SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-OBJECTS := $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+SRCFILES = $(wildcard $(SRCDIR)/*.c)
+OBJFILES = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCFILES))
+EXEFILE = $(BINDIR)/program
 
-# -g debug, --coverage cobertura
-CFLAGS := -Wall -std=c++17
-INC := -I include/ -I third_party/
+.PHONY: all clean
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+all: $(EXEFILE)
 
-main: $(OBJECTS)
-	$(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o matop
+$(EXEFILE): $(OBJFILES)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
-# all: main
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(OBJDIR)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	$(RM) -r $(OBJDIR)/* $(BINDIR)/* coverage/* *.gcda *.gcno
+	rm -rf $(OBJDIR) $(BINDIR)
 
-.PHONY: clean
+$(shell mkdir -p $(BINDIR) $(OBJDIR))
