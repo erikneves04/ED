@@ -1,4 +1,4 @@
-int fatorial_iterativo(int atual)
+long long int fatorial_iterativo(int atual)
 {
     int resultado = 1;
 
@@ -11,12 +11,21 @@ int fatorial_iterativo(int atual)
     return resultado;
 }
 
-int Fibonacci_iterativo(int atual)
+long long int fibonacci_iterativo(int atual)
 {
+    int i, aux; 
+    int b = 1;
+    int a = 0; 
+
     if (atual == 0)
         return 0;
-    if (atual == 1)
+    else if (atual == 1)
         return 1;
 
-    return Fibonacci_recursivo(atual - 1) + Fibonacci_recursivo(atual - 2);
+    for ( i = 0; atual > i+1; i++){
+        aux = a + b;
+        a = b;
+        b = aux;
+    }
+    return aux;
 }

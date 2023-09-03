@@ -1,4 +1,4 @@
-int fatorial_recursivo(int atual)
+long long int fatorial_recursivo(int atual)
 {
     if (atual == 0)
         return 1;
@@ -6,12 +6,12 @@ int fatorial_recursivo(int atual)
     return atual * fatorial_recursivo(atual - 1);
 }
 
-int Fibonacci_recursivo(int atual)
+long long int fibonacci_recursivo(int atual)
 {
     if (atual == 0)
         return 0;
     if (atual == 1)
         return 1;
 
-    return Fibonacci_recursivo(atual - 1) + Fibonacci_recursivo(atual - 2);
+    return fibonacci_recursivo(atual - 1) + fibonacci_recursivo(atual - 2);
 }
