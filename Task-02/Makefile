@@ -27,10 +27,7 @@ clean:
 $(shell mkdir -p $(BINDIR) $(OBJDIR))
 
 run: all
-	./$(BINDIR)/main fatorial-recursivo 1 16
-	./$(BINDIR)/main fatorial-iterativo 1 20
-	./$(BINDIR)/main fibonacci-recursivo 1 40
-	./$(BINDIR)/main fibonacci-iterativo 1 40
+	./$(BINDIR)/main 5
 
 profile: all
 	./$(BINDIR)/main fibonacci-recursivo 1 40
