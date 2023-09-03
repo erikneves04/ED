@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -I$(INCDIR)
+CFLAGS = -Wall -I$(INCDIR) -pg  
 LDFLAGS = -lm
 SRCDIR = src
 BINDIR = bin
@@ -22,14 +22,16 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	rm -rf $(OBJDIR) $(BINDIR) gmon.out 
 
 $(shell mkdir -p $(BINDIR) $(OBJDIR))
 
 run: all
-	./$(BINDIR)/main fatorial-recursivo 1 20
+	./$(BINDIR)/main fatorial-recursivo 1 16
+	./$(BINDIR)/main fatorial-iterativo 1 20
 	./$(BINDIR)/main fibonacci-recursivo 1 40
+	./$(BINDIR)/main fibonacci-iterativo 1 40
 
 profile: all
 	./$(BINDIR)/main fibonacci-recursivo 1 40
-	gprof ./$(BINDIR)/main gmon.out > output.txt
+	gprof ./$(BINDIR)/main > output.txt 
