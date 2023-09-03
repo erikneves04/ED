@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
         for(i = start; i<= end; i++)
         {
             fatorial_recursivo(i);
-            //printf("Factorial(recursivo) de %d eh: %lld\n", i, );
+            //printf("Factorial(recursivo) de %d eh: %lld\n", i, fatorial_recursivo(i));
         }
     } 
     else if (strcmp(function, "fatorial-iterativo") == 0) 

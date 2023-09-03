@@ -19,7 +19,7 @@ $(EXEFILE): $(OBJFILES)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(OBJDIR)
-	$(CC) $(CFLAGS) -pg -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR) $(BINDIR)
@@ -27,5 +27,9 @@ clean:
 $(shell mkdir -p $(BINDIR) $(OBJDIR))
 
 run: all
+	./$(BINDIR)/main fatorial-recursivo 1 20
 	./$(BINDIR)/main fibonacci-recursivo 1 40
-	./$(BINDIR)/main fibonacci-iterativo 1 40
+
+profile: all
+	./$(BINDIR)/main fibonacci-recursivo 1 40
+	gprof ./$(BINDIR)/main gmon.out > output.txt
