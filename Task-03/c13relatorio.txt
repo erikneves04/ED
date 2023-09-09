@@ -1,0 +1,37 @@
+Ao analisar o código c13.c, é possivel observar que são alocados 3 buffers, porém somente um é liberado.
+
+Ao utilizar a ferramenta valgrind, tive essa resposta:
+==4488== HEAP SUMMARY:
+==4488==     in use at exit: 35 bytes in 2 blocks
+==4488==   total heap usage: 3 allocs, 1 frees, 47 bytes allocated
+==4488== 
+==4488== 16 bytes in 1 blocks are definitely lost in loss record 1 of 2
+==4488==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4488==    by 0x1091A6: main (in /home/gabriella/Documents/ED/ED/Task-03/executavel)
+==4488== 
+==4488== 19 bytes in 1 blocks are definitely lost in loss record 2 of 2
+==4488==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==4488==    by 0x10917E: main (in /home/gabriella/Documents/ED/ED/Task-03/executavel)
+==4488== 
+==4488== LEAK SUMMARY:
+==4488==    definitely lost: 35 bytes in 2 blocks
+==4488==    indirectly lost: 0 bytes in 0 blocks
+==4488==      possibly lost: 0 bytes in 0 blocks
+==4488==    still reachable: 0 bytes in 0 blocks
+==4488==         suppressed: 0 bytes in 0 blocks
+==4488== 
+==4488== For lists of detected and suppressed errors, rerun with: -s
+==4488== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)                  
+
+confirmando dois buffers não são liberados.
+
+Para corrigir o código, acrescentei dois free(p);
+
+Ao utilizar o valgrind novamente, tive essa resposta: ==4540== HEAP SUMMARY:
+==4540==     in use at exit: 0 bytes in 0 blocks
+==4540==   total heap usage: 3 allocs, 3 frees, 47 bytes allocated
+==4540== 
+==4540== All heap blocks were freed -- no leaks are possible
+==4540== 
+==4540== For lists of detected and suppressed errors, rerun with: -s
+==4540== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
