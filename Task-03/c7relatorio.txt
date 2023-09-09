@@ -1,0 +1,22 @@
+Ao analisar o código c7.c, é possivel observar que o vetor alphabet é alocado dinamicamente e e no final, entretanto, os seus índices variam de 0 a 25 e, ao final do programa, há uma tentativa de acessar o índice 26, que não existe, e adicionar um \0, para indicar que é o final, o que não faz muito sentido, já que o alfabeto termina com oo caractere Z.
+
+Ao utilizar a ferramenta valgrind, tive essa resposta:
+==3898== Invalid write of size 1      
+==3898==    at 0x1091BC: main (in /home/gabriella/Documents/ED/ED/Task-03/executavel)
+==3898==  Address 0x4a9405a is 0 bytes after a block of size 26 alloc'd
+==3898==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)                                                                         
+==3898==    by 0x109183: main (in /home/gabriella/Documents/ED/ED/Task-03/executavel)
+==3898==                         
+
+confirmando que uma posição inválida é acessada.
+
+Para corrigir o código, retirei o comando *(alphabet + 26) = '\0'; //null-terminate the string?.
+
+Ao utilizar o valgrind novamente, tive essa resposta: ==4003== HEAP SUMMARY:
+==4003==     in use at exit: 0 bytes in 0 blocks
+==4003==   total heap usage: 1 allocs, 1 frees, 26 bytes allocated
+==4003== 
+==4003== All heap blocks were freed -- no leaks are possible
+==4003== 
+==4003== For lists of detected and suppressed errors, rerun with: -s
+==4003== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
