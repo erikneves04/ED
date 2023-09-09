@@ -1,0 +1,39 @@
+Ao analisar o código c3.c, é possivel observar que, a cada loop do for, o malloc está alocando mais 100 posições, entretanto, somente o último buffer é liberado.
+
+Ao utilizar a ferramenta valgrind, tive essa resposta: 
+==3628== HEAP SUMMARY:                 
+==3628==     in use at exit: 3,600 bytes in 9 blocks
+==3628==   total heap usage: 10 allocs, 1 frees, 4,000 bytes allocated
+==3628==                                            
+==3628== 3,600 bytes in 9 blocks are definitely lost in loss record 1 of 1                                                                                            
+==3628==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==3628==    by 0x10918E: main (in /home/gabriella/Documents/ED/ED/Task-03/executavel)
+==3628==                                                  
+==3628== LEAK SUMMARY:
+==3628==    definitely lost: 3,600 bytes in 9 blocks
+==3628==    indirectly lost: 0 bytes in 0 blocks
+==3628==      possibly lost: 0 bytes in 0 blocks
+==3628==    still reachable: 0 bytes in 0 blocks
+==3628==         suppressed: 0 bytes in 0 blocks
+==3628== 
+==3628== For lists of detected and suppressed errors, rerun with: -s
+==3628== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+
+confirmando que somente um buffer foi liberado.
+
+Para corrigir o código, mudei o loop de for (i=0; i < 10; i++){
+    a = malloc(sizeof(int) * 100);
+  }
+  free(a); para for (i=0; i < 10; i++){
+    a = malloc(sizeof(int) * 100);
+    free(a);
+  }, assim, toda vez que um buffer é alocado ele já é liberado.
+
+Ao utilizar o valgrind novamente, tive essa resposta: ==3699== HEAP SUMMARY:
+==3699==     in use at exit: 0 bytes in 0 blocks
+==3699==   total heap usage: 10 allocs, 10 frees, 4,000 bytes allocated
+==3699== 
+==3699== All heap blocks were freed -- no leaks are possible
+==3699== 
+==3699== For lists of detected and suppressed errors, rerun with: -s
+==3699== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
