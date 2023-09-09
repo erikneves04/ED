@@ -1,0 +1,53 @@
+1 -> Ao compilar o código, houve um erro de compilação. O compilador nos indicou que foram alocados 10 bytes numa região
+(neste caso, a string msg) de tamanho 8, ou seja, ouve overflow.
+
+
+2 -> 
+
+c11.c: In function ‘main’:
+c11.c:9:9: warning: ‘__builtin_memcpy’ writing 10 bytes into a region of size 8 overflows the destination [-Wstringop-overflow=]
+    9 |         strcpy(msg, "Holberton");
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+c11.c:8:21: note: destination object of size 8 allocated by ‘malloc’
+    8 |         char *msg = malloc(8);
+      |  
+
+Após resolver este problema aumentando o espaço armazenado pelo malloc para 10 bytes, ainda tivemos um vazamento de memória:
+
+==11784== HEAP SUMMARY:
+==11784==     in use at exit: 10 bytes in 1 blocks
+==11784==   total heap usage: 2 allocs, 1 frees, 1,034 bytes allocated
+==11784== 
+==11784== 10 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==11784==    at 0x4841848: malloc (vg_replace_malloc.c:431)
+==11784==    by 0x10916A: main (c11correto.c:8)
+==11784== 
+==11784== LEAK SUMMARY:
+==11784==    definitely lost: 10 bytes in 1 blocks
+==11784==    indirectly lost: 0 bytes in 0 blocks
+==11784==      possibly lost: 0 bytes in 0 blocks
+==11784==    still reachable: 0 bytes in 0 blocks
+==11784==         suppressed: 0 bytes in 0 blocks
+==11784== 
+==11784== For lists of detected and suppressed errors, rerun with: -s
+==11784== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+
+3 -> Para resolver o problema de vazamento de memória, adicionamos uma linha para liberar a string msg.
+
+4 ->
+
+==12090== Memcheck, a memory error detector
+==12090== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==12090== Using Valgrind-3.21.0 and LibVEX; rerun with -h for copyright info
+==12090== Command: ./a.out
+==12090== 
+12090, Rolberton
+==12090== 
+==12090== HEAP SUMMARY:
+==12090==     in use at exit: 0 bytes in 0 blocks
+==12090==   total heap usage: 2 allocs, 2 frees, 1,034 bytes allocated
+==12090== 
+==12090== All heap blocks were freed -- no leaks are possible
+==12090== 
+==12090== For lists of detected and suppressed errors, rerun with: -s
+==12090== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
