@@ -1,0 +1,10 @@
+Ao analisar o código c15.c, é possivel observar que o return da main é argc, quando deveria ser 0 por padrão.
+
+Ao utilizar a ferramenta GDB, tive essa resposta:
+[Inferior 1 (process 5239) exited with code 01]                
+
+confirmando que o erro está na forma como o código termina. 
+
+Para corrigir o código, mudei o comando return argc; para return 0;
+
+Ao utilizar o GDB novamente, tive essa resposta: [Inferior 1 (process 5316) exited normally]
