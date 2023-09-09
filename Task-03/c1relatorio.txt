@@ -1,0 +1,14 @@
+Ao analisar o código c1.c, é possivel observar que, no início do código, o malloc está alocando 10 posições para números inteiros, entretanto, o for tenta preencher 11 posições (tendo em vista que o i se inicia em 0).
+
+Ao utilizar a ferramenta valgrind, tive essa resposta: 
+==3066== Invalid write of size 4
+==3066==    at 0x1091B8: main (c1.c:9)
+==3066==  Address 0x4a94068 is 0 bytes after a block of size 40 alloc'd
+==3066==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==3066==    by 0x109185: main (c1.c:6)
+
+confirmando que houve uma escrita inválida.
+
+Para corrigir o código, mudei o loop de for (i = 0; i < 11; i++) para for (i = 0; i < 10; i++), assim, nenhuma posição inválida será acessada.
+
+Ao utilizar o valgrind novamente, tive essa resposta: ==3468== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
