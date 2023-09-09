@@ -1,0 +1,25 @@
+1 -> O código inicial não aloca o espaço necessário para a matriz e tenta liberar a memória de um char* não alocado.
+
+2 ->
+Program received signal SIGSEGV, Segmentation fault.
+0x00007ffff7e3247e in __GI___libc_free (mem=0x64) at ./malloc/malloc.c:3368
+3368    ./malloc/malloc.c: No such file or directory.
+
+==2414== Process terminating with default action of signal 11 (SIGSEGV)
+==2414==  Access not within mapped region at address 0x0
+==2414==    at 0x10917A: main (in /mnt/d/UFMG-Storage/2023-2/ED/Task-03/a.out)
+==2414==  If you believe this happened as a result of a stack
+==2414==  overflow in your program's main thread (unlikely but
+==2414==  possible), you can try to increase the size of the
+==2414==  main thread stack using the --main-stacksize= flag.
+==2414==  The main thread stack size used in this run was 8388608.
+==2414== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: 0 from 0)
+
+3 -> A matriz foi alocada corretamente e a variável text foi removida do código.
+
+4 ->
+==2814== HEAP SUMMARY:
+==2814==     in use at exit: 0 bytes in 0 blocks
+==2814==   total heap usage: 6 allocs, 6 frees, 112 bytes allocated
+==2814==
+==2814== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

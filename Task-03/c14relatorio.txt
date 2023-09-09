@@ -1,0 +1,24 @@
+1 -> Foi usada uma variável não inicializada(int fact), portanto ouve um erro(lixo) ao tentar acessa-lá erro
+todas as multiplicações do cálculo do fatorial acarretaram em erros.
+
+2 ->
+Positive integer:10
+==3653== Conditional jump or move depends on uninitialised value(s)
+==3653==    at 0x48D7B56: __vfprintf_internal (vfprintf-internal.c:1516)
+==3653==    by 0x48C181E: printf (printf.c:33)
+==3653==    by 0x10920D: main (c14.c:12)
+
+3 -> A variável fact foi inicializada com o valor 1 para resolver o erro e não interferir no resultado da operação.
+
+4 ->
+Positive integer:10
+Factorial 10 = 3628800
+==3683== 
+==3683== HEAP SUMMARY:
+==3683==     in use at exit: 0 bytes in 0 blocks
+==3683==   total heap usage: 2 allocs, 2 frees, 2,048 bytes allocated
+==3683== 
+==3683== All heap blocks were freed -- no leaks are possible
+==3683== 
+==3683== For lists of detected and suppressed errors, rerun with: -s
+==3683== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

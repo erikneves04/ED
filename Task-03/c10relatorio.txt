@@ -1,0 +1,29 @@
+1 -> O código possui um loop infinito de alocações que não são liberadas após o uso.
+
+2 ->
+==3366== HEAP SUMMARY:
+==3366==     in use at exit: 7,354,240 bytes in 57,448 blocks
+==3366==   total heap usage: 57,448 allocs, 0 frees, 7,354,240 bytes allocated
+==3366==
+==3366== LEAK SUMMARY:
+==3366==    definitely lost: 7,353,088 bytes in 57,446 blocks
+==3366==    indirectly lost: 0 bytes in 0 blocks
+==3366==      possibly lost: 0 bytes in 0 blocks
+==3366==    still reachable: 1,152 bytes in 2 blocks
+==3366==         suppressed: 0 bytes in 0 blocks
+
+3 -> Para corrigir, mantive o loop infinito(por acreditar que é um requisito para alocar muita memória) e adicionei a
+liberação da variável alocada dentro do loop logo após sua impressão. Assim conseguimos garantir que tudo que foi
+usado será devidamente liberado.
+
+4 ->
+==3398== HEAP SUMMARY:
+==3398==     in use at exit: 1,152 bytes in 2 blocks
+==3398==   total heap usage: 20,626 allocs, 20,624 frees, 2,641,024 bytes allocated
+==3398== 
+==3398== LEAK SUMMARY:
+==3398==    definitely lost: 0 bytes in 0 blocks
+==3398==    indirectly lost: 0 bytes in 0 blocks
+==3398==      possibly lost: 0 bytes in 0 blocks
+==3398==    still reachable: 1,152 bytes in 2 blocks
+==3398==         suppressed: 0 bytes in 0 blocks

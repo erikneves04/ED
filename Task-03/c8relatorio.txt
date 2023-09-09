@@ -1,0 +1,23 @@
+1 -> O primeiro array(destination) possui 27 elementos enquanto o segundo(source) possui apenas 26. 
+Dentro do loop, quando tentamos acessar o 27º elemento do source, recebemos o erro por estarmos 
+excedendo a memória disponibilizada para aquele recurso.
+
+2 ->
+==3231== Invalid read of size 1
+==3231==    at 0x1091D2: main (c8.c:9)
+==3231==  Address 0x4a8c0ba is 0 bytes after a block of size 26 alloc'd
+==3231==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==3231==    by 0x1091B1: main (c8.c:6)
+
+3 -> Para resolver o problema bastou reduzir o range do loop para 26, e os demais campos do destination serão
+inicializados com 0(zero) tendo em vista que o mesmo foi alocado com a função calloc.
+
+4 ->
+==3272== HEAP SUMMARY:
+==3272==     in use at exit: 0 bytes in 0 blocks
+==3272==   total heap usage: 2 allocs, 2 frees, 53 bytes allocated
+==3272== 
+==3272== All heap blocks were freed -- no leaks are possible
+==3272== 
+==3272== For lists of detected and suppressed errors, rerun with: -s
+==3272== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
