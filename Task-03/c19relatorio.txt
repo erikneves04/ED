@@ -1,0 +1,59 @@
+1 -> O código possui uma falha de segmentação, pois a string buf não foi inicializada com nenhum valor de armazenamento.
+
+2 -> 
+
+--Type <RET> for more, q to quit, c to continue without paging--c
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/libthread_db.so.1".
+enter a number:
+10
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00007ffff7d6d479 in ?? () from /usr/lib/libc.so.6
+(gdb) 
+
+-> Depois de resolvermos isso, ainda obtivemos um vazamento de memória.
+
+==13641== 
+==13641== HEAP SUMMARY:
+==13641==     in use at exit: 10 bytes in 1 blocks
+==13641==   total heap usage: 3 allocs, 2 frees, 2,058 bytes allocated
+==13641== 
+==13641== LEAK SUMMARY:
+==13641==    definitely lost: 0 bytes in 0 blocks
+==13641==    indirectly lost: 0 bytes in 0 blocks
+==13641==      possibly lost: 0 bytes in 0 blocks
+==13641==    still reachable: 10 bytes in 1 blocks
+==13641==         suppressed: 0 bytes in 0 blocks
+==13641== Reachable blocks (those to which a pointer was found) are not shown.
+==13641== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13641== 
+==13641== For lists of detected and suppressed errors, rerun with: -s
+==13641== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+
+
+3 -> Para resolver a falha de segmentação, especificamos um tamanho de armazenamento para a string buf
+( buf = malloc(10 * sizeof(char)) ). Depois, para solucionar o vazamento de memória, adicionamos uma linha
+para liberar memória.
+
+4 ->
+
+To make this setting permanent, add 'set debuginfod enabled off' to .gdbinit.
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/libthread_db.so.1".
+enter a number:
+10
+sum=55
+[Inferior 1 (process 13462) exited normally]
+
+
+
+==13825== HEAP SUMMARY:
+==13825==     in use at exit: 0 bytes in 0 blocks
+==13825==   total heap usage: 3 allocs, 3 frees, 2,058 bytes allocated
+==13825== 
+==13825== All heap blocks were freed -- no leaks are possible
+==13825== 
+==13825== For lists of detected and suppressed errors, rerun with: -s
+==13825== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
