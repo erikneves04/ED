@@ -12,7 +12,7 @@
 #include "memlog.h"
 
 #ifndef MAXTAM 
-#define MAXTAM 5
+#define MAXTAM 50
 #endif
 
 typedef struct mat{
