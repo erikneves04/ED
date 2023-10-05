@@ -34,9 +34,14 @@ class LinkedList
             }
         }
 
+        int Length()
+        {
+            return _size;
+        }
+
         void Insert(DataType data)
         {
-            auto newNode = new Node<DataType>;
+            Node<DataType>* newNode = new Node<DataType>();
             newNode->data = data;
 
             newNode->next = nullptr;
