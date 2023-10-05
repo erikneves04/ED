@@ -75,6 +75,11 @@ class Stack
             return data;
         }
     
+        DataType OnTop()
+        {
+            return _first->data;
+        }
+
         bool Empty()
         {
             return _size == 0;
