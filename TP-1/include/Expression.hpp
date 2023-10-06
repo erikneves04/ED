@@ -19,21 +19,21 @@ class Expression
         bool _valuesWasSet = false;
         int _inputCount = 0;
 
-        LinkedList<Nodule*> _expression;
-        LinkedList<InputValue> _values;
+        LinkedList<Nodule*>* _expression;
+        LinkedList<InputValue>* _values;
 
         void SetupValues(std::string values);
         void SetupExpression(std::string expression);
 
         bool FindValue(std::string key);
-        bool FindValue(std::string key, LinkedList<InputValue> values);
+        bool FindValue(std::string key, LinkedList<InputValue>* values);
     public:
         Expression(std::string expression, std::string values);
         Expression(std::string expression);
         ~Expression();
 
         bool Evaluate();
-        bool Evaluate(LinkedList<InputValue> values);
+        bool Evaluate(LinkedList<InputValue>* values);
 
 };
 

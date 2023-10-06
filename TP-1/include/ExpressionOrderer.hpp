@@ -12,14 +12,19 @@
 #include "DataStructures/LinkedList.hpp"
 #include "DataStructures/Stack.hpp"
 
+#define RESULT_NODULE_NAME ("result")
+
 class ExpressionOrderer
 {
     private:
-        Stack<InputNodule*> _inputStack;
-        Stack<Nodule*> _operationStack;
+        Stack<InputNodule*>* _inputStack;
+        Stack<Nodule*>* _operationStack;
 
     public:
-        bool Perform(LinkedList<Nodule*> nodules);
+        ExpressionOrderer();
+        ~ExpressionOrderer();
+
+        bool Perform(LinkedList<Nodule*>* nodules);
 };
 
 #endif

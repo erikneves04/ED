@@ -27,22 +27,29 @@ Expression::Expression(std::string expression)
 
 Expression::~Expression()
 {
-    for (int i = 0; i < _expression.Length(); i++)
+    for (int i = 0; i < _expression->Length(); i++)
     {
-        auto nodule = _expression.Get(i);
+        auto nodule = _expression->Get(i);
         delete nodule;
     }
+
+    delete _expression;
+
+    if (_valuesWasSet)
+        delete _values;
 }
 
 void Expression::SetupValues(std::string values)
 {
+    _values = new LinkedList<InputValue>();
+
     for (std::size_t i = 0; i < values.length(); i++)
     {
         auto value = values[i];
         std::string index = std::to_string(i);
 
         auto input = InputValue(index, value == '1');
-        _values.Insert(input);
+        _values->Insert(input);
     }
 
     _valuesWasSet = true;
@@ -95,14 +102,14 @@ ParenthesesNodule* ParseParenthesesNodule(std::string value, Stack<ParenthesesNo
     }
 }
 
-bool Expression::FindValue(std::string key, LinkedList<InputValue> values)
+bool Expression::FindValue(std::string key, LinkedList<InputValue>* values)
 {
     if(!_valuesWasSet)
         throw value_not_set_exception();
 
-    for (int i = 0; i < values.Length(); i++)
+    for (int i = 0; i < values->Length(); i++)
     {
-        auto pair = values.Get(i);
+        auto pair = values->Get(i);
         if(pair.key == key)
             return pair.value;
     }
@@ -117,6 +124,8 @@ bool Expression::FindValue(std::string key)
 
 void Expression::SetupExpression(std::string expression)
 {
+    _expression = new LinkedList<Nodule*>();
+
     auto tokens = ParseExpressionString(expression);
     auto startParentheses = Stack<ParenthesesNodule*>();
 
@@ -129,14 +138,14 @@ void Expression::SetupExpression(std::string expression)
         if (value == ")" || value == "(")
         {
             auto nodule = ParseParenthesesNodule(value, startParentheses);
-            _expression.Insert(nodule);
+            _expression->Insert(nodule);
             continue;
         }
 
         if (value == OR || value == AND || value == NOT)
         {
             auto nodule = new OperationNodule(value);
-            _expression.Insert(nodule);
+            _expression->Insert(nodule);
             continue;
         }
 
@@ -144,16 +153,16 @@ void Expression::SetupExpression(std::string expression)
         if (_valuesWasSet)
         {
             auto nodule = new InputNodule(value, FindValue(value));
-            _expression.Insert(nodule);
+            _expression->Insert(nodule);
         }
         else
         {
             auto nodule = new InputNodule(value);
-            _expression.Insert(nodule);
+            _expression->Insert(nodule);
         }
     }
 
-    if (_valuesWasSet && _values.Length() != _inputCount)
+    if (_valuesWasSet && _values->Length() != _inputCount)
         throw difference_between_inputs_and_variable_count_exception();
 }
 
@@ -165,16 +174,17 @@ bool Expression::Evaluate()
     return ExpressionOrderer().Perform(_expression);
 }
 
-bool Expression::Evaluate(LinkedList<InputValue> values)
+bool Expression::Evaluate(LinkedList<InputValue>* values)
 {
-    if (values.Length() != _inputCount)
+    if (values->Length() != _inputCount)
         throw difference_between_inputs_and_variable_count_exception();
 
     _valuesWasSet = true;
+    _values = values;
 
-    for(int i = 0; i < _expression.Length(); i++)
+    for(int i = 0; i < _expression->Length(); i++)
     {
-        auto nodule = _expression.Get(i);
+        auto nodule = _expression->Get(i);
         if(nodule->GetType() == NoduleType::INPUT)
         {
             auto input = (InputNodule*)nodule;
