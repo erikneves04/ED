@@ -26,9 +26,13 @@ class LinkedList
         {
             auto current = _head;
 
-            while (current != nullptr)
+            for(int i = 0; i<_size; i++)
             {
                 auto next = current->next;
+
+                if (current == nullptr)
+                    break;
+
                 delete current;
                 current = next;
             }
