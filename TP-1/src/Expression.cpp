@@ -134,12 +134,22 @@ void Expression::SetupExpression(std::string expression)
         auto value = tokens[i];
         if(value.empty())
             continue;
-        
+
         if (value == ")" || value == "(")
         {
             auto nodule = ParseParenthesesNodule(value, startParentheses);
             _expression->Insert(nodule);
             continue;
+        }
+
+        if (value == NOT)
+        {
+            auto next = tokens[i + 1];
+            if (next == NOT)
+            {
+                i++;
+                continue;
+            }
         }
 
         if (value == OR || value == AND || value == NOT)
@@ -180,6 +190,10 @@ bool Expression::Evaluate(LinkedList<InputValue>* values)
         throw difference_between_inputs_and_variable_count_exception();
 
     _valuesWasSet = true;
+
+    if (_values != nullptr)
+        delete _values;
+
     _values = values;
 
     for(int i = 0; i < _expression->Length(); i++)

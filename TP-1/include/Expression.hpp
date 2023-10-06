@@ -19,8 +19,8 @@ class Expression
         bool _valuesWasSet = false;
         int _inputCount = 0;
 
-        LinkedList<Nodule*>* _expression;
-        LinkedList<InputValue>* _values;
+        LinkedList<Nodule*>* _expression = nullptr;
+        LinkedList<InputValue>* _values = nullptr;
 
         void SetupValues(std::string values);
         void SetupExpression(std::string expression);

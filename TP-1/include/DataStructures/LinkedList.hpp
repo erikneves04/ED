@@ -112,6 +112,14 @@ class LinkedList
             return current->data;
         }
 
+        DataType Last()
+        {
+            if (Empty())
+                throw empty_set_exception();
+
+            return _tail->data;
+        }
+
         bool Empty()
         {
             return _size == 0;
