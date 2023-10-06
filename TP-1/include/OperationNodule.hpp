@@ -20,8 +20,9 @@ class OperationNodule
 {
     public:
         OperationNodule(std::string value);
-        bool PerformOperation(InputNodule left, InputNodule right);
-        bool PerformOperation(InputNodule value);
+        bool PerformOperation(InputNodule* left, InputNodule* right);
+        bool PerformOperation(InputNodule* value);
+        bool HasAGreaterPrecedenceThan(OperationNodule* other);
 };
 
 #endif

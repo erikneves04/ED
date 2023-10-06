@@ -15,21 +15,29 @@ InputValue::InputValue(std::string key, bool value)
     this->value = value;
 }
 
-InputNodule::InputNodule(std::string value, LinkedList<InputValue> values)
+InputNodule::InputNodule(std::string value)
     : Nodule(value, NoduleType::INPUT)
 {
-    _values = values;
+    _currentValueIsSet = false;
 }
 
-bool InputNodule::GetValue()
+InputNodule::InputNodule(std::string value, bool currentValue)
+    : Nodule(value, NoduleType::INPUT)
 {
-    for (int i = 0; i < _values.Length(); i++)
-    {
-        auto current = _values.Get(i);
-        if (current.key == _value)
-        {
-            return current.value;
-        }
-    }
-    return false;
+    _currentValue = currentValue;
+    _currentValueIsSet = true;
+}
+
+bool InputNodule::GetCurrentValue()
+{
+    if (!_currentValueIsSet)
+        throw value_not_set_exception();
+    
+    return _currentValue;
+}
+
+void InputNodule::SetCurrentValue(bool newValue)
+{
+    _currentValue = newValue;
+    _currentValueIsSet = true;
 }

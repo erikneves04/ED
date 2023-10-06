@@ -10,21 +10,32 @@ OperationNodule::OperationNodule(std::string value)
     }
 }
 
-bool OperationNodule::PerformOperation(InputNodule left, InputNodule right)
+bool OperationNodule::PerformOperation(InputNodule* left, InputNodule* right)
 {
     if (_value == OR)
-        return left.GetValue() || right.GetValue();
+        return left->GetCurrentValue() || right->GetCurrentValue();
 
     if (_value == AND)
-        return left.GetValue() && right.GetValue();
+        return left->GetCurrentValue() && right->GetCurrentValue();
 
     throw invalid_operation_format_exception();
 }
 
-bool OperationNodule::PerformOperation(InputNodule value)
+bool OperationNodule::PerformOperation(InputNodule* value)
 {
     if (_value == NOT)
-        return !value.GetValue();
+        return !value->GetCurrentValue();
 
     throw invalid_operation_format_exception();
+}
+
+bool OperationNodule::HasAGreaterPrecedenceThan(OperationNodule* other)
+{
+    if (_value == NOT)
+        return true;
+
+    if (_value == AND && other->_value == OR)
+        return true;
+
+    return false;
 }

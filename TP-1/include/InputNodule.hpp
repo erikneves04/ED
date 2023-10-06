@@ -4,9 +4,10 @@
 #define INPUTNODULE_HPP
 
 #include <string>
-
 #include "Nodule.hpp"
-#include "DataStructures/LinkedList.hpp"
+
+class value_not_set_exception
+{};
 
 class InputValue
 {
@@ -22,12 +23,16 @@ class InputNodule
     : public Nodule
 {
     protected:
-        LinkedList<InputValue> _values;
+        bool _currentValue;
+        bool _currentValueIsSet = false;
 
     public:
         InputNodule();
-        InputNodule(std::string value, LinkedList<InputValue> values);
-        bool GetValue();
+        InputNodule(std::string value);
+        InputNodule(std::string value, bool currentValue);
+
+        bool GetCurrentValue();
+        void SetCurrentValue(bool newValue);
 };
 
 #endif
