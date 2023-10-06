@@ -1,7 +1,4 @@
 #include <string>
-#include <vector>
-
-#include <iostream>
 
 #include "DataStructures/LinkedList.hpp"
 #include "DataStructures/Stack.hpp"
@@ -55,9 +52,9 @@ void Expression::SetupValues(std::string values)
     _valuesWasSet = true;
 }
 
-std::vector<std::string> ParseExpressionString(std::string expression)
+LinkedList<std::string>* ParseExpressionString(std::string expression)
 {
-    std::vector<std::string> tokens;
+    LinkedList<std::string>* tokens = new LinkedList<std::string>();
     std::string currentToken;
 
     for (char ch : expression) 
@@ -66,7 +63,7 @@ std::vector<std::string> ParseExpressionString(std::string expression)
         {
             if (!currentToken.empty()) 
             {
-                tokens.push_back(currentToken);
+                tokens->Insert(currentToken);
                 currentToken.clear();
             }
         } else 
@@ -77,7 +74,7 @@ std::vector<std::string> ParseExpressionString(std::string expression)
     
     if (!currentToken.empty()) 
     {
-        tokens.push_back(currentToken);
+        tokens->Insert(currentToken);
     }
 
     return tokens;
@@ -129,9 +126,9 @@ void Expression::SetupExpression(std::string expression)
     auto tokens = ParseExpressionString(expression);
     auto startParentheses = Stack<ParenthesesNodule*>();
 
-    for (std::size_t i = 0; i < tokens.size(); i++)
+    for (int i = 0; i < tokens->Length(); i++)
     {
-        auto value = tokens[i];
+        auto value = tokens->Get(i);
         if(value.empty())
             continue;
 
@@ -144,7 +141,7 @@ void Expression::SetupExpression(std::string expression)
 
         if (value == NOT)
         {
-            auto next = tokens[i + 1];
+            auto next = tokens->Get(i + 1);
             if (next == NOT)
             {
                 i++;
@@ -171,6 +168,8 @@ void Expression::SetupExpression(std::string expression)
             _expression->Insert(nodule);
         }
     }
+
+    delete tokens;
 
     if (_valuesWasSet && _values->Length() != _inputCount)
         throw difference_between_inputs_and_variable_count_exception();

@@ -1,8 +1,6 @@
 #define SUCCESS (00)
 
 #include "DataStructures/LinkedList.hpp"
-#include "DataStructures/Stack.hpp"
-#include "DataStructures/Queue.hpp"
 
 #include "Expression.hpp"
 #include "InputNodule.hpp"
