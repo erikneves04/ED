@@ -33,6 +33,13 @@ void Grafo::InsereAresta(int v, int w)
             return;
 
     list->Insert(w);
+
+    list = vertices->Get(w);
+    for(int i = 0; i < list->Size(); i++)
+        if(list->Get(i) == v )
+            return;
+
+    list->Insert(v);    
 }
 
 int Grafo::QuantidadeVertices()
@@ -47,7 +54,7 @@ int Grafo::QuantidadeArestas()
     for(int i = 0; i < vertices->Size(); i++)
         count += vertices->Get(i)->Size();
 
-    return count;
+    return count / 2;
 }
 
 int Grafo::GrauMinimo()
