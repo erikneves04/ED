@@ -20,6 +20,11 @@ class ExpressionOrderer
         Stack<InputNodule*>* _inputStack;
         Stack<Nodule*>* _operationStack;
 
+        void ExecutePendingOperations();
+        void ExecutePrecedenceOperations(OperationNodule* operation);
+        void ExecuteAllParenthesesNodules();
+        void ExecuteOperationNodule(OperationNodule* operation);
+        bool TakeLastInputValue();
     public:
         ExpressionOrderer();
         ~ExpressionOrderer();

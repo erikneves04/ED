@@ -44,91 +44,94 @@ bool ExpressionOrderer::Perform(LinkedList<Nodule*>* nodules)
 
         if (current->GetType() == NoduleType::END_PARENTHESES)
         {
-            while(_operationStack->OnTop()->GetType() != NoduleType::START_PARENTHESES)
-            {
-                auto operation = (OperationNodule*)_operationStack->Remove();
-                auto input1 = _inputStack->Remove();
-                auto input2 = _inputStack->Remove();
-
-                auto result = operation->PerformOperation(input1, input2);
-                auto resultNodule = new InputNodule("result", result);
-                _inputStack->Insert(resultNodule);
-            }
-
-            _operationStack->Remove();
+            ExecuteAllParenthesesNodules();
             continue;
         }
 
         if (current->GetType() == NoduleType::OPERATOR)
         {
             auto thisOp = (OperationNodule*)current;
-
-            while(!_operationStack->Empty() && ((OperationNodule*)_operationStack->OnTop())->HasAGreaterPrecedenceThan(thisOp))
-            {
-                auto currentOperation = (OperationNodule*)_operationStack->Remove();
-
-                if (currentOperation->GetValue() == NOT)
-                {
-                    auto input = _inputStack->Remove();
-
-                    auto result = currentOperation->PerformOperation(input);
-                    auto resultNodule = new InputNodule(RESULT_NODULE_NAME, result);
-
-                    _inputStack->Insert(resultNodule);
-                    DeleteIfIsResultNodule(input);
-                }
-                else
-                {
-                    auto input1 = _inputStack->Remove();
-                    auto input2 = _inputStack->Remove();
-
-                    auto result = currentOperation->PerformOperation(input1, input2);
-                    auto resultNodule = new InputNodule(RESULT_NODULE_NAME, result);
-
-                    _inputStack->Insert(resultNodule);
-
-                    DeleteIfIsResultNodule(input1);
-                    DeleteIfIsResultNodule(input2);
-                }
-            }
-
-            _operationStack->Insert(current);
+            ExecutePrecedenceOperations(thisOp);
         }
     }
 
+    ExecutePendingOperations();
+
+    return TakeLastInputValue();
+}
+
+void ExpressionOrderer::ExecutePendingOperations()
+{
     while(!_operationStack->Empty())
     {
         auto currentOperation = (OperationNodule*)_operationStack->Remove();
+        ExecuteOperationNodule(currentOperation);
+    }
+}
 
-        if (currentOperation->GetValue() == NOT)
-        {
-            auto input = _inputStack->Remove();
-            
-            auto result = currentOperation->PerformOperation(input);
-            auto resultNodule = new InputNodule(RESULT_NODULE_NAME, result);
-            
-            _inputStack->Insert(resultNodule);
-            delete input;
-        }
-        else
-        {
-            auto input1 = _inputStack->Remove();
-            auto input2 = _inputStack->Remove();
+void ExpressionOrderer::ExecuteAllParenthesesNodules()
+{
+    while(_operationStack->OnTop()->GetType() != NoduleType::START_PARENTHESES)
+    {
+        auto operation = (OperationNodule*)_operationStack->Remove();
+        auto input1 = _inputStack->Remove();
+        auto input2 = _inputStack->Remove();
 
-            auto result = currentOperation->PerformOperation(input1, input2);
-            auto resultNodule = new InputNodule(RESULT_NODULE_NAME, result);
+        auto result = operation->PerformOperation(input1, input2);
+        auto resultNodule = new InputNodule(RESULT_NODULE_NAME, result);
+        _inputStack->Insert(resultNodule);
 
-            _inputStack->Insert(resultNodule);
-
-            DeleteIfIsResultNodule(input1);
-            DeleteIfIsResultNodule(input2);
-        }
+        DeleteIfIsResultNodule(input1);
+        DeleteIfIsResultNodule(input2);
     }
 
+    _operationStack->Remove();
+}
+
+bool ExpressionOrderer::TakeLastInputValue()
+{
     auto lastInputNodule = _inputStack->Remove();
     auto lastValue = lastInputNodule->GetCurrentValue();
 
     DeleteIfIsResultNodule(lastInputNodule);
 
     return lastValue;
+}
+
+void ExpressionOrderer::ExecutePrecedenceOperations(OperationNodule* operation)
+{
+    while(!_operationStack->Empty() && ((OperationNodule*)_operationStack->OnTop())->HasAGreaterPrecedenceThan(operation))
+    {
+        auto currentOperation = (OperationNodule*)_operationStack->Remove();
+        ExecuteOperationNodule(currentOperation);
+    }
+
+    _operationStack->Insert(operation);
+}
+
+void ExpressionOrderer::ExecuteOperationNodule(OperationNodule* operation)
+{
+    if (operation->GetValue() == NOT)
+    {
+        auto input = _inputStack->Remove();
+        
+        auto result = operation->PerformOperation(input);
+        auto resultNodule = new InputNodule(RESULT_NODULE_NAME, result);
+        
+        _inputStack->Insert(resultNodule);
+        DeleteIfIsResultNodule(input);
+    }
+    else
+    {
+        auto input1 = _inputStack->Remove();
+        auto input2 = _inputStack->Remove();
+
+        auto result = operation->PerformOperation(input1, input2);
+        auto resultNodule = new InputNodule(RESULT_NODULE_NAME, result);
+
+        _inputStack->Insert(resultNodule);
+
+        DeleteIfIsResultNodule(input1);
+        DeleteIfIsResultNodule(input2);
+    }
 }
