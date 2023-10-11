@@ -16,6 +16,7 @@ class difference_between_inputs_and_variable_count_exception
 class Expression
 {
     private:
+        bool _disableValuesMemoryDelete = false;
         bool _valuesWasSet = false;
         int _inputCount = 0;
 

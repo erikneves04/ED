@@ -32,7 +32,7 @@ Expression::~Expression()
 
     delete _expression;
 
-    if (_valuesWasSet)
+    if (_valuesWasSet && !_disableValuesMemoryDelete)
         delete _values;
 }
 
@@ -184,19 +184,17 @@ bool Expression::Evaluate()
 }
 
 bool Expression::Evaluate(LinkedList<InputValue>* values)
-{
+{   
     if (values->Length() != _inputCount)
         throw difference_between_inputs_and_variable_count_exception();
 
     _valuesWasSet = true;
-
-    if (_values != nullptr)
-        delete _values;
+    _disableValuesMemoryDelete = true;
 
     _values = values;
 
     for(int i = 0; i < _expression->Length(); i++)
-    {
+    {   
         auto nodule = _expression->Get(i);
         if(nodule->GetType() == NoduleType::INPUT)
         {
@@ -205,6 +203,5 @@ bool Expression::Evaluate(LinkedList<InputValue>* values)
             input->SetCurrentValue(newValue);
         }
     }
-
     return Evaluate();
 }
