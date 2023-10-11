@@ -103,10 +103,11 @@ class LinkedList
                 throw empty_set_exception();
 
             auto current = _head;
-
-            for (int i = 0; i < index; i++)
+            
+            for (int i = 1; i < index; i++)
             {
-                current = current->next;
+                if (current != nullptr)
+                    current = current->next;
             }
 
             return current->data;
