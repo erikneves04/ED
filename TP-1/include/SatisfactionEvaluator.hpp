@@ -27,9 +27,7 @@ class SatisfactionEvaluator
         void SetupVariablesIndex();
         bool HasVariableForIndex(int index);
         
-        void InsertInputListIntoAsserts(int index, LinkedList<InputValue>* inputList);
         void ExecuteAllInputsCombination();
-        void SetupAssertsIntersection();
     public:
         SatisfactionEvaluator(std::string expression, std::string input);
         ~SatisfactionEvaluator();
