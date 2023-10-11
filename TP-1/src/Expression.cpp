@@ -203,5 +203,6 @@ bool Expression::Evaluate(LinkedList<InputValue>* values)
             input->SetCurrentValue(newValue);
         }
     }
+
     return Evaluate();
 }
