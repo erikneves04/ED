@@ -38,13 +38,8 @@ void SatisfactionEvaluator::SetupVariablesIndex()
 
 bool SatisfactionEvaluator::HasVariableForIndex(int index)
 {
-    for (int i = 0; i < _variablesIndex.Length(); i++)
-    {
-        if (_variablesIndex.Get(i) == index)
-            return true;
-    }
-
-    return false;
+    std::string value(1, _input[index]);
+    return (value == EXISTS || value == FOR_ALL);
 }
 
 void SatisfactionEvaluator::ExecuteAllInputsCombination()
@@ -61,8 +56,10 @@ void SatisfactionEvaluator::ExecuteAllInputsCombination()
 
         auto result = expression.Evaluate(inputList);
 
-        if (result)                    
-            _asserts.Insert(inputList);
+        if (!result)            
+            continue;
+        
+        _asserts.Insert(inputList);
     }
 
     delete allInputsCombination;
