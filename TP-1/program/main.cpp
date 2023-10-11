@@ -1,22 +1,46 @@
-#define SUCCESS (00)
-
-#include "DataStructures/LinkedList.hpp"
+#include <iostream>
 
 #include "Expression.hpp"
-#include "InputNodule.hpp"
+#include "SatisfactionEvaluator.hpp"
 
-#include <iostream>
+#define SUCCESS (00)
+#define FAILURE (01)
 
 int main(int argc, char const *argv[])
 {
-    Expression expression = Expression( "~ ~ 0 | 1", "10");
+    if (argc != 4)
+    {
+        std::cout << "Usage: -function -expression -input" << std::endl;
+        return FAILURE;
+    }    
 
-    LinkedList<InputValue>* values = new LinkedList<InputValue>();
+    std::string function(argv[1]);
+    std::string expressionBase(argv[2]);
+    std::string input(argv[3]);
 
-    values->Insert(InputValue("0", true));
-    values->Insert(InputValue("1", false));
+    try
+    {
+        if (function == "−a" || function == "-a")
+        {
+            Expression expression = Expression(expressionBase, input);
+            std::cout << expression.Evaluate() << std::endl;
+        }
+    
+        if (function == "−s" || function == "-s")
+        {
+            SatisfactionEvaluator satisfactionEvaluator = SatisfactionEvaluator(expressionBase, input);
+            std::cout << satisfactionEvaluator.HasSolution() << std::endl;
+        }
+    }
+    catch (...)
+    {
+        std::cout << "The parameters entered are invalid." << std::endl;
+        std::cout << "Function: " << function << std::endl;
+        std::cout << "Expression: " << expressionBase << std::endl;
+        std::cout << "Input: " << input << std::endl;
 
-    std::cout << expression.Evaluate(values) << std::endl;
+        return FAILURE;
+    }
 
     return SUCCESS;
 }
