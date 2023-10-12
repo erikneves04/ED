@@ -154,7 +154,7 @@ std::string SatisfactionEvaluator::GetSolution()
             withOtherValue[i] = (result[i] == '0') ? '1' : '0';
             
             if (solutions.Contains(withOtherValue))
-                result[i] = 'a';
+                result[i] = SOLUTION_IRRELEVANT_OUTPUT;
         }
     }
 

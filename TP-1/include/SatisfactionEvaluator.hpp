@@ -11,6 +11,8 @@
 #define EXISTS ("e")
 #define FOR_ALL ("a")
 
+#define SOLUTION_IRRELEVANT_OUTPUT ('a')
+
 class SatisfactionEvaluator
 {
     private:
