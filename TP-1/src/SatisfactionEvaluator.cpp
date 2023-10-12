@@ -157,7 +157,7 @@ bool SatisfactionEvaluator::ExistsAssert(int index)
             return true;
     }
 
-    return false;;
+    return false;
 }
 
 bool SatisfactionEvaluator::HasSolution()
