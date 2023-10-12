@@ -153,7 +153,7 @@ bool SatisfactionEvaluator::ExistsAssert(int index)
         char newChar = assert[index] == '0' ? '1' : '0';
         assert[index] = newChar;
 
-        if (_fails->Contains(assert) || _solutions->Contains(assert))
+        if (_solutions->Contains(assert) || _fails->Contains(assert))
             return true;
     }
 
@@ -275,16 +275,8 @@ std::string SatisfactionEvaluator::GetSolution()
     {
         std::string input(1, _input[i]);
         
-        if (input == EXISTS || input == FOR_ALL)
-        {
-            if (IsVariableIrreleant(result, i))
-            {
-                result[i] = SOLUTION_IRRELEVANT_OUTPUT;
-
-                //if (!_solutions->Contains(result))
-                //    solutions->Insert(result);
-            }
-        }
+        if ((input == EXISTS || input == FOR_ALL) && IsVariableIrreleant(result, i))
+            result[i] = SOLUTION_IRRELEVANT_OUTPUT;
     }
 
     return result;
