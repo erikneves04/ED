@@ -33,6 +33,7 @@ class SatisfactionEvaluator
         ~SatisfactionEvaluator();
 
         bool HasSolution();
+        std::string GetSolution();
 
 };
 

@@ -29,7 +29,12 @@ int main(int argc, char const *argv[])
         if (function == "−s" || function == "-s")
         {
             SatisfactionEvaluator satisfactionEvaluator = SatisfactionEvaluator(expressionBase, input);
-            std::cout << satisfactionEvaluator.HasSolution() << std::endl;
+            bool hasSolution = satisfactionEvaluator.HasSolution();
+
+            if (hasSolution)
+                std::cout << hasSolution << " " << satisfactionEvaluator.GetSolution() << std::endl;
+            else
+                std::cout << hasSolution << std::endl;
         }
     }
     catch (...)
