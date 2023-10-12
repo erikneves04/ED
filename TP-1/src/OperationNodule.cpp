@@ -39,3 +39,9 @@ bool OperationNodule::HasAGreaterPrecedenceThan(OperationNodule* other)
 
     return false;
 }
+
+ParenthesesNodule::ParenthesesNodule(std::string value, NoduleType type)
+    : Nodule(value, type)
+{
+    _end = nullptr;
+}

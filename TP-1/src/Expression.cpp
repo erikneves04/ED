@@ -6,7 +6,6 @@
 #include "Nodule.hpp"
 #include "InputNodule.hpp"
 #include "OperationNodule.hpp"
-#include "ParenthesesNodule.hpp"
 
 #include "Expression.hpp"
 #include "ExpressionOrderer.hpp"

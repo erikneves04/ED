@@ -25,4 +25,12 @@ class OperationNodule
         bool HasAGreaterPrecedenceThan(OperationNodule* other);
 };
 
+class ParenthesesNodule
+    : public Nodule
+{
+    public:
+        ParenthesesNodule* _end;
+        ParenthesesNodule(std::string value, NoduleType type);
+};
+
 #endif

@@ -2,7 +2,6 @@
 
 #include "InputNodule.hpp"
 #include "OperationNodule.hpp"
-#include "ParenthesesNodule.hpp"
 #include "ExpressionOrderer.hpp"
 
 #include "DataStructures/Stack.hpp"
