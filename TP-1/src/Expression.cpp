@@ -14,6 +14,7 @@ Expression::Expression(std::string expression, std::string values)
 {
     SetupValues(values);
     SetupExpression(expression);
+    SetupVariableExpressionCount();
 }
 
 Expression::Expression(std::string expression)
@@ -137,7 +138,7 @@ void Expression::SetupVariableExpressionCount()
 
     _differentVariablesOnExpression = variableCount;
 }
-
+#include <iostream>
 void Expression::SetupExpression(std::string expression)
 {
     _expression = new LinkedList<Nodule*>();
@@ -145,11 +146,21 @@ void Expression::SetupExpression(std::string expression)
     auto tokens = ParseExpressionString(expression);
     auto startParentheses = Stack<ParenthesesNodule*>();
 
+    int start = 0;
+    int end = 0;
+    int operationsCount = 0;
+    int inputCount = 0;
+    
     for (int i = 0; i < tokens->Length(); i++)
     {
         auto value = tokens->Get(i);
         if (value == ")" || value == "(")
         {
+            if (value == "(")
+                start++;
+            else
+                end++;
+
             if (value == ")" && startParentheses.Empty())
                 continue;
 
@@ -170,11 +181,13 @@ void Expression::SetupExpression(std::string expression)
 
         if (value == OR || value == AND || value == NOT)
         {
+            operationsCount++;
             auto nodule = new OperationNodule(value);
             _expression->Insert(nodule);
             continue;
         }
 
+        inputCount++;
         _inputCount++;
         if (_valuesWasSet)
         {
@@ -190,13 +203,14 @@ void Expression::SetupExpression(std::string expression)
 
     delete tokens;
 
-    if (_valuesWasSet)
-    {
-        SetupVariableExpressionCount();
+    if (_valuesWasSet && _values->Length() < _differentVariablesOnExpression)
+        throw difference_between_inputs_and_variable_count_exception();
 
-        if (_values->Length() < _differentVariablesOnExpression)
-            throw difference_between_inputs_and_variable_count_exception();
-    }        
+    //std::cout << "Expression: " << expression.length() << std::endl;
+    //std::cout << "Start Parentheses: " << start << std::endl;
+    //std::cout << "End Parentheses: " << end << std::endl;
+    //std::cout << "Operations: " << operationsCount << std::endl;
+    //std::cout << "Inputs: " << inputCount << std::endl;
 }
 
 bool Expression::Evaluate()
@@ -208,8 +222,8 @@ bool Expression::Evaluate()
 }
 
 bool Expression::Evaluate(LinkedList<InputValue>* values)
-{   
-    if (values->Length() != _inputCount)
+{       
+    if (values->Length() < _differentVariablesOnExpression)
         throw difference_between_inputs_and_variable_count_exception();
 
     _valuesWasSet = true;
@@ -227,8 +241,6 @@ bool Expression::Evaluate(LinkedList<InputValue>* values)
             input->SetCurrentValue(newValue);
         }
     }
-
-    SetupVariableExpressionCount();
 
     return Evaluate();
 }
