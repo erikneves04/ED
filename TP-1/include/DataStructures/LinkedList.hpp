@@ -51,7 +51,7 @@ class LinkedList
             newNode->next = nullptr;
             newNode->previous = _tail;
 
-            if (_head == nullptr)
+            if (_size == 0)
             {
                 _head = newNode;
                 _tail = newNode;
@@ -102,12 +102,11 @@ class LinkedList
             if (index < 0 || index >= _size)
                 throw empty_set_exception();
 
-            auto current = _head;
-            
-            for (int i = 1; i < index; i++)
+            Node<DataType>* current = _head;
+
+            for (int i = 0; i < index; i++)
             {
-                if (current != nullptr)
-                    current = current->next;
+                current = current->next;
             }
 
             return current->data;
