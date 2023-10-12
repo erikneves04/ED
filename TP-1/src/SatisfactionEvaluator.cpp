@@ -61,10 +61,10 @@ void SatisfactionEvaluator::ExecuteAllInputsCombination()
 
         auto result = expression->Evaluate(inputList);
 
-        if (!result)            
-            continue;
-        
-        _asserts.Insert(inputList);
+        if (result)        
+            _asserts.Insert(inputList);
+        else
+            _fails.Insert(inputList);
     }
 
     delete allInputsCombination;
@@ -162,18 +162,30 @@ bool SatisfactionEvaluator::IsVariableIrreleant(std::string result, int index, L
     return false;
 }
 
+LinkedList<std::string>* ConvertValueListIntoStringList(LinkedList<LinkedList<InputValue>*> values)
+{
+    LinkedList<std::string>* result = new LinkedList<std::string>();
+    
+    for(int i = 0; i < values.Length(); i++)
+    {
+        LinkedList<InputValue>* value = values.Get(i);
+        std::string solution = ConvertValueListIntoString(value);
+        result->Insert(solution);
+    }
+
+    return result;
+}
+
 std::string SatisfactionEvaluator::GetSolution()
 {
+    if (!HasSolution())
+        return "";
+
     if (_asserts.Length() == 1)
         return ConvertValueListIntoString(_asserts.Get(0));
 
-    LinkedList<std::string>* solutions = new LinkedList<std::string>();
-    for(int i = 0; i < _asserts.Length(); i++)
-    {
-        LinkedList<InputValue>* values = _asserts.Get(i);
-        std::string solution = ConvertValueListIntoString(values);
-        solutions->Insert(solution);
-    }
+    LinkedList<std::string>* solutions = ConvertValueListIntoStringList(_asserts);
+    LinkedList<std::string>* fails = ConvertValueListIntoStringList(_fails);
 
     std::string result = solutions->Get(0);
 
