@@ -1,5 +1,4 @@
 #include <string>
-#include <iostream>
 
 #include "InputNodule.hpp"
 #include "Expression.hpp"
@@ -14,12 +13,18 @@ SatisfactionEvaluator::SatisfactionEvaluator(std::string expression, std::string
     _input = input;
     _expression = expression;
 
+    _asserts = new LinkedList<LinkedList<InputValue>*>();
+    _fails = new LinkedList<LinkedList<InputValue>*>();
+
     SetupVariablesIndex();
     ExecuteAllInputsCombination();
 }
 
 SatisfactionEvaluator::~SatisfactionEvaluator()
 {
+    delete _asserts;
+    delete _fails;
+
     for (int i = 0; i < _allInputsCombination.Length(); i++)
     {
         LinkedList<InputValue>* inputList = _allInputsCombination.Get(i);
@@ -63,9 +68,9 @@ void SatisfactionEvaluator::ExecuteAllInputsCombination()
         auto result = expression->Evaluate(inputList);
 
         if (result)        
-            _asserts.Insert(inputList);
+            _asserts->Insert(inputList);
         else
-            _fails.Insert(inputList);
+            _fails->Insert(inputList);
     }
 
     delete allInputsCombination;
@@ -78,9 +83,9 @@ bool SatisfactionEvaluator::ForAllAssert(int index)
     bool hasZero = false;
     bool hasOne = false;
 
-    for (int i = 0; i < _asserts.Length(); i++)
+    for (int i = 0; i < _asserts->Length(); i++)
     {
-        LinkedList<InputValue>* inputList = _asserts.Get(i);
+        LinkedList<InputValue>* inputList = _asserts->Get(i);
         InputValue input = inputList->Get(index);
         bool value = input.value;
 
@@ -98,7 +103,7 @@ bool SatisfactionEvaluator::ForAllAssert(int index)
 
 bool SatisfactionEvaluator::ExistsAssert(int index)
 {
-    return !_asserts.Empty();
+    return !_asserts->Empty();
 }
 
 bool SatisfactionEvaluator::HasSolution()
@@ -210,13 +215,13 @@ bool SatisfactionEvaluator::IsVariableIrreleant(std::string& result, int index, 
     return false;
 }
 
-LinkedList<std::string>* ConvertValueListIntoStringList(LinkedList<LinkedList<InputValue>*> values)
+LinkedList<std::string>* ConvertValueListIntoStringList(LinkedList<LinkedList<InputValue>*>* values)
 {
     LinkedList<std::string>* result = new LinkedList<std::string>();
     
-    for(int i = 0; i < values.Length(); i++)
+    for(int i = 0; i < values->Length(); i++)
     {
-        LinkedList<InputValue>* value = values.Get(i);
+        LinkedList<InputValue>* value = values->Get(i);
         std::string solution = ConvertValueListIntoString(value);
         result->Insert(solution);
     }
@@ -229,8 +234,8 @@ std::string SatisfactionEvaluator::GetSolution()
     if (!HasSolution())
         return "";
 
-    if (_asserts.Length() == 1)
-        return ConvertValueListIntoString(_asserts.Get(0));
+    if (_asserts->Length() == 1)
+        return ConvertValueListIntoString(_asserts->Get(0));
 
     LinkedList<std::string>* solutions = ConvertValueListIntoStringList(_asserts);
     LinkedList<std::string>* fails = ConvertValueListIntoStringList(_fails);
@@ -254,8 +259,8 @@ std::string SatisfactionEvaluator::GetSolution()
         }
     }
 
-    //delete solutions;
-    //delete fails;
+    delete solutions;
+    delete fails;
 
     return result;
 }

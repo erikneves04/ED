@@ -22,8 +22,8 @@ class SatisfactionEvaluator
         LinkedList<int>* _variablesIndex;
         LinkedList<LinkedList<InputValue>*> _allInputsCombination;
 
-        LinkedList<LinkedList<InputValue>*> _asserts;
-        LinkedList<LinkedList<InputValue>*> _fails;
+        LinkedList<LinkedList<InputValue>*>* _asserts;
+        LinkedList<LinkedList<InputValue>*>* _fails;
 
         bool ForAllAssert(int index);
         bool ExistsAssert(int index);
