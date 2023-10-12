@@ -13,12 +13,12 @@ class InputExchanger
 {
     private:
         std::string _input;
-        LinkedList<int> _variablesIndex;
+        LinkedList<int>* _variablesIndex;
 
         bool HasVariableForIndex(int index);
         LinkedList<std::string> GenerateBinaryCombinations(int bitsCount);
     public:
-        InputExchanger(std::string input, LinkedList<int> variablesIndex);
+        InputExchanger(std::string input, LinkedList<int>* variablesIndex);
         Queue<LinkedList<InputValue>*>* GetAllInputsCombination();
 };
 

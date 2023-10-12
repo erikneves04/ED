@@ -6,7 +6,7 @@
 #include "DataStructures/Queue.hpp"
 #include "DataStructures/LinkedList.hpp"
 
-InputExchanger::InputExchanger(std::string input, LinkedList<int> variablesIndex)
+InputExchanger::InputExchanger(std::string input, LinkedList<int>* variablesIndex)
 {
     _input = input;
     _variablesIndex = variablesIndex;
@@ -14,9 +14,9 @@ InputExchanger::InputExchanger(std::string input, LinkedList<int> variablesIndex
 
 bool InputExchanger::HasVariableForIndex(int index)
 {
-    for (int i = 0; i < _variablesIndex.Length(); i++)
+    for (int i = 0; i < _variablesIndex->Length(); i++)
     {
-        if (_variablesIndex.Get(i) == index)
+        if (_variablesIndex->Get(i) == index)
             return true;
     }
 
@@ -26,7 +26,7 @@ bool InputExchanger::HasVariableForIndex(int index)
 Queue<LinkedList<InputValue>*>* InputExchanger::GetAllInputsCombination()
 {
     Queue<LinkedList<InputValue>*>* queue = new Queue<LinkedList<InputValue>*>();
-    LinkedList<std::string> combinations = GenerateBinaryCombinations(_variablesIndex.Length());
+    LinkedList<std::string> combinations = GenerateBinaryCombinations(_variablesIndex->Length());
 
     for(int i = 0; i < combinations.Length(); i++)
     {
