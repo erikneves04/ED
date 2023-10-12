@@ -112,7 +112,7 @@ bool Expression::FindValue(std::string key, LinkedList<InputValue>* values)
         if(pair.key == key)
             return pair.value;
     }
-
+    
     throw value_not_set_exception();
 }
 
@@ -138,29 +138,19 @@ void Expression::SetupVariableExpressionCount()
 
     _differentVariablesOnExpression = variableCount;
 }
-#include <iostream>
+
 void Expression::SetupExpression(std::string expression)
 {
     _expression = new LinkedList<Nodule*>();
 
     auto tokens = ParseExpressionString(expression);
     auto startParentheses = Stack<ParenthesesNodule*>();
-
-    int start = 0;
-    int end = 0;
-    int operationsCount = 0;
-    int inputCount = 0;
     
     for (int i = 0; i < tokens->Length(); i++)
     {
         auto value = tokens->Get(i);
         if (value == ")" || value == "(")
         {
-            if (value == "(")
-                start++;
-            else
-                end++;
-
             if (value == ")" && startParentheses.Empty())
                 continue;
 
@@ -181,13 +171,11 @@ void Expression::SetupExpression(std::string expression)
 
         if (value == OR || value == AND || value == NOT)
         {
-            operationsCount++;
             auto nodule = new OperationNodule(value);
             _expression->Insert(nodule);
             continue;
         }
 
-        inputCount++;
         _inputCount++;
         if (_valuesWasSet)
         {
@@ -205,12 +193,6 @@ void Expression::SetupExpression(std::string expression)
 
     if (_valuesWasSet && _values->Length() < _differentVariablesOnExpression)
         throw difference_between_inputs_and_variable_count_exception();
-
-    //std::cout << "Expression: " << expression.length() << std::endl;
-    //std::cout << "Start Parentheses: " << start << std::endl;
-    //std::cout << "End Parentheses: " << end << std::endl;
-    //std::cout << "Operations: " << operationsCount << std::endl;
-    //std::cout << "Inputs: " << inputCount << std::endl;
 }
 
 bool Expression::Evaluate()
