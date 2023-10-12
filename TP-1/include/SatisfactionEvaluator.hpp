@@ -22,8 +22,11 @@ class SatisfactionEvaluator
         LinkedList<int>* _variablesIndex;
         LinkedList<LinkedList<InputValue>*> _allInputsCombination;
 
-        LinkedList<LinkedList<InputValue>*>* _asserts;
-        LinkedList<LinkedList<InputValue>*>* _fails;
+        LinkedList<LinkedList<InputValue>*>* _trueCombinations;
+        LinkedList<LinkedList<InputValue>*>* _falseCombinations;
+
+        LinkedList<std::string>* _solutions;
+        LinkedList<std::string>* _fails;
 
         bool ForAllAssert(int index);
         bool ExistsAssert(int index);
@@ -31,11 +34,14 @@ class SatisfactionEvaluator
         void SetupVariablesIndex();
         bool HasVariableForIndex(int index);
 
-        bool IsVariableIrreleant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails);
-        bool IsExistsIrrelevant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails);
-        bool IsForAllIrrelevant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails);
+        bool IsVariableIrreleant(std::string& result, int index);
+        bool IsExistsIrrelevant(std::string& result, int index);
+        bool IsForAllIrrelevant(std::string& result, int index);
 
         void ExecuteAllInputsCombination();
+
+        std::string ConvertValueListIntoString(LinkedList<InputValue>* values);
+        LinkedList<std::string>* ConvertValueListIntoStringList(LinkedList<LinkedList<InputValue>*>* values);
     public:
         SatisfactionEvaluator(std::string expression, std::string input);
         ~SatisfactionEvaluator();

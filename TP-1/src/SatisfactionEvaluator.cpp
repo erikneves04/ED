@@ -13,24 +13,30 @@ SatisfactionEvaluator::SatisfactionEvaluator(std::string expression, std::string
     _input = input;
     _expression = expression;
 
-    _asserts = new LinkedList<LinkedList<InputValue>*>();
-    _fails = new LinkedList<LinkedList<InputValue>*>();
+    _trueCombinations = new LinkedList<LinkedList<InputValue>*>();
+    _falseCombinations = new LinkedList<LinkedList<InputValue>*>();
 
     SetupVariablesIndex();
     ExecuteAllInputsCombination();
+
+    _solutions = ConvertValueListIntoStringList(_trueCombinations);
+    _fails = ConvertValueListIntoStringList(_falseCombinations);
 }
 
 SatisfactionEvaluator::~SatisfactionEvaluator()
 {
-    delete _asserts;
+    delete _trueCombinations;
+    delete _falseCombinations;
+    
+    delete _solutions;
     delete _fails;
-
+    
     for (int i = 0; i < _allInputsCombination.Length(); i++)
     {
         LinkedList<InputValue>* inputList = _allInputsCombination.Get(i);
         delete inputList;
     }
-
+    
     delete _variablesIndex;
 }
 
@@ -52,7 +58,7 @@ bool SatisfactionEvaluator::HasVariableForIndex(int index)
     return (value == EXISTS || value == FOR_ALL);
 }
 
-std::string ConvertValueListIntoString(LinkedList<InputValue>* values)
+std::string SatisfactionEvaluator::ConvertValueListIntoString(LinkedList<InputValue>* values)
 {
     std::string result = "";
 
@@ -65,7 +71,7 @@ std::string ConvertValueListIntoString(LinkedList<InputValue>* values)
     return result;
 }
 
-LinkedList<std::string>* ConvertValueListIntoStringList(LinkedList<LinkedList<InputValue>*>* values)
+LinkedList<std::string>* SatisfactionEvaluator::ConvertValueListIntoStringList(LinkedList<LinkedList<InputValue>*>* values)
 {
     LinkedList<std::string>* result = new LinkedList<std::string>();
     
@@ -94,9 +100,9 @@ void SatisfactionEvaluator::ExecuteAllInputsCombination()
         auto result = expression->Evaluate(inputList);
 
         if (result)        
-            _asserts->Insert(inputList); 
+            _trueCombinations->Insert(inputList); 
         else
-            _fails->Insert(inputList);
+            _falseCombinations->Insert(inputList);
     }
 
     delete allInputsCombination;
@@ -106,22 +112,20 @@ void SatisfactionEvaluator::ExecuteAllInputsCombination()
 
 bool SatisfactionEvaluator::ForAllAssert(int index)
 {
-    LinkedList<std::string>* asserts = ConvertValueListIntoStringList(_asserts);
     bool found = true;
-    for (int i = 0; i < _asserts->Length(); i++)
+    for (int i = 0; i < _trueCombinations->Length(); i++)
     {
-        std::string assert = asserts->Get(i);
+        std::string assert = _solutions->Get(i);
         char newChar = assert[index] == '0' ? '1' : '0';
         assert[index] = newChar;
 
-        if (!asserts->Contains(assert))
+        if (!_solutions->Contains(assert))
         {
             found = false;
             break;
         }
     }
     
-    delete asserts;
     if (found)
         return true;
 
@@ -130,54 +134,38 @@ bool SatisfactionEvaluator::ForAllAssert(int index)
 
 bool SatisfactionEvaluator::ExistsAssert(int index)
 {
-    if (_asserts->Length() == _allInputsCombination.Length() || _fails->Length() == 0)
+    if (_trueCombinations->Length() == _allInputsCombination.Length() || _falseCombinations->Length() == 0)
         return true;
 
-    LinkedList<std::string>* fails = ConvertValueListIntoStringList(_fails);
-    LinkedList<std::string>* asserts = ConvertValueListIntoStringList(_asserts);
-
-    for(int i = 0; i < fails->Length(); i++)
+    for(int i = 0; i < _fails->Length(); i++)
     {
-        auto fail = fails->Get(i);
+        auto fail = _fails->Get(i);
         char newChar = fail[index] == '0' ? '1' : '0';
         fail[index] = newChar;
 
-        if (asserts->Contains(fail))
-        {
-            delete fails;
-            delete asserts;
-
+        if (_solutions->Contains(fail))
             return true;
-        }
     }
 
-    for(int i = 0; i < asserts->Length(); i++)
+    for(int i = 0; i < _solutions->Length(); i++)
     {
-        auto assert = asserts->Get(i);
+        auto assert = _solutions->Get(i);
         char newChar = assert[index] == '0' ? '1' : '0';
         assert[index] = newChar;
 
-        if (fails->Contains(assert) || asserts->Contains(assert))
-        {
-            delete fails;
-            delete asserts;
-
+        if (_fails->Contains(assert) || _solutions->Contains(assert))
             return true;
-        }
     }
-
-    delete fails;
-    delete asserts;
 
     return false;;
 }
 
 bool SatisfactionEvaluator::HasSolution()
 {
-    if (_fails->Length() == _allInputsCombination.Length())
+    if (_falseCombinations->Length() == _allInputsCombination.Length())
         return false;
 
-    if (_asserts->Length() == _allInputsCombination.Length())
+    if (_trueCombinations->Length() == _allInputsCombination.Length())
         return true;
 
     for(size_t i = 0; i < _input.length(); i++)
@@ -185,15 +173,9 @@ bool SatisfactionEvaluator::HasSolution()
         std::string input(1, _input[i]);
         
         if (input == EXISTS && !ExistsAssert(i))
-        {
-            //std::cout << "Interrompido por exists." << std::endl;
             return false;
-        }
         else if (input == FOR_ALL && !ForAllAssert(i))
-        {
-            //std::cout << "Interrompido por for all." << std::endl;
             return false;
-        }
     }
 
     return true;
@@ -223,10 +205,10 @@ bool IsExistsDeterminant(char value, std::string& result, int index, LinkedList<
     return isDeterminant;
 }
 
-bool SatisfactionEvaluator::IsExistsIrrelevant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails)
+bool SatisfactionEvaluator::IsExistsIrrelevant(std::string& result, int index)
 {
-    bool zeroIsDeterminant = IsExistsDeterminant('0', result, index, solutions, fails);
-    bool oneIsDeterminant = IsExistsDeterminant('1', result, index, solutions, fails);
+    bool zeroIsDeterminant = IsExistsDeterminant('0', result, index, _solutions, _fails);
+    bool oneIsDeterminant = IsExistsDeterminant('1', result, index, _solutions, _fails);
 
     if (zeroIsDeterminant && oneIsDeterminant)
         return true;
@@ -234,17 +216,17 @@ bool SatisfactionEvaluator::IsExistsIrrelevant(std::string& result, int index, L
         return false;
 }
 
-bool SatisfactionEvaluator::IsForAllIrrelevant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails)
+bool SatisfactionEvaluator::IsForAllIrrelevant(std::string& result, int index)
 {
     std::string withOtherValue = result;
     withOtherValue[index] = (result[index] == '0') ? '1' : '0';
     
-    if (solutions->Contains(withOtherValue))
+    if (_solutions->Contains(withOtherValue))
         return true;
 
-    for(unsigned int i = 0; i < (unsigned int)solutions->Length(); i++)
+    for(unsigned int i = 0; i < (unsigned int)_solutions->Length(); i++)
     {
-        auto solution = solutions->Get(i);
+        auto solution = _solutions->Get(i);
 
         for(unsigned int j = 0; j < result.length(); j++)
         {
@@ -267,14 +249,14 @@ bool SatisfactionEvaluator::IsForAllIrrelevant(std::string& result, int index, L
     return false;
 }
 
-bool SatisfactionEvaluator::IsVariableIrreleant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails)
+bool SatisfactionEvaluator::IsVariableIrreleant(std::string& result, int index)
 {
     std::string input(1, _input[index]);
 
     if (input == EXISTS)
-        return IsExistsIrrelevant(result, index, solutions, fails);
+        return IsExistsIrrelevant(result, index);
     else if (input == FOR_ALL)
-        return IsForAllIrrelevant(result, index, solutions, fails);
+        return IsForAllIrrelevant(result, index);
 
     return false;
 }
@@ -284,13 +266,10 @@ std::string SatisfactionEvaluator::GetSolution()
     if (!HasSolution())
         return "";
 
-    if (_asserts->Length() == 1)
-        return ConvertValueListIntoString(_asserts->Get(0));
+    if (_trueCombinations->Length() == 1)
+        return ConvertValueListIntoString(_trueCombinations->Get(0));
 
-    LinkedList<std::string>* solutions = ConvertValueListIntoStringList(_asserts);
-    LinkedList<std::string>* fails = ConvertValueListIntoStringList(_fails);
-
-    std::string result = solutions->Get(0);
+    std::string result = _solutions->Get(0);
 
     for(unsigned int i = 0; i < _input.length(); i++)
     {
@@ -298,19 +277,15 @@ std::string SatisfactionEvaluator::GetSolution()
         
         if (input == EXISTS || input == FOR_ALL)
         {
-            if (IsVariableIrreleant(result, i, solutions, fails))
+            if (IsVariableIrreleant(result, i))
             {
                 result[i] = SOLUTION_IRRELEVANT_OUTPUT;
 
-                if (!solutions->Contains(result))
-                    solutions->Insert(result);
+                //if (!_solutions->Contains(result))
+                //    solutions->Insert(result);
             }
-                
         }
     }
-
-    delete solutions;
-    delete fails;
 
     return result;
 }
