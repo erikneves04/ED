@@ -109,7 +109,7 @@ bool SatisfactionEvaluator::HasSolution()
         if (input == EXISTS && !ExistsAssert(i))
             return false;
 
-        else if (input == FOR_ALL && _asserts.Length() != _allInputsCombination.Length())
+        else if (input == FOR_ALL && !ForAllAssert(i))
             return false;
     }
 
