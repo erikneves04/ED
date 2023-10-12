@@ -3,8 +3,6 @@ SRCDIR := src
 OBJDIR := build
 BINDIR := bin
 
-MAIN := program/main.cpp
-
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
@@ -20,9 +18,10 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 
 main: $(OBJECTS)
 	@mkdir -p $(BINDIR)
-	$(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o $(BINDIR)/tp1.out
+	$(CC) $(CFLAGS) $(INC) $^ -o $(BINDIR)/tp1.out
 
-all: main
+all: $(EXE)
+	more vpl_evaluate.cases
 
 clean:
 	$(RM) -r $(OBJDIR)/* $(BINDIR)/*

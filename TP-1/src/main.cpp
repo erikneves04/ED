@@ -7,7 +7,7 @@
 #define FAILURE (01)
 
 int main(int argc, char const *argv[])
-{
+{   
     if (argc != 4)
     {
         std::cout << "Usage: -function -expression -input" << std::endl;
