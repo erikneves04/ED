@@ -124,6 +124,21 @@ class LinkedList
         {
             return _size == 0;
         }
+
+        bool Contains(DataType data)
+        {
+            auto current = _head;
+
+            while (current != nullptr)
+            {
+                if (current->data == data)
+                    return true;
+
+                current = current->next;
+            }
+
+            return false;
+        }
 };
 
 #endif
