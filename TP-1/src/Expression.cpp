@@ -104,7 +104,7 @@ bool Expression::FindValue(std::string key, LinkedList<InputValue>* values)
 {
     if(!_valuesWasSet)
         throw value_not_set_exception();
-
+    
     for (int i = 0; i < values->Length(); i++)
     {
         auto pair = values->Get(i);
@@ -120,6 +120,24 @@ bool Expression::FindValue(std::string key)
     return FindValue(key, _values);
 }
 
+void Expression::SetupVariableExpressionCount()
+{
+    int variableCount = 0;
+    LinkedList<std::string> variables;
+
+    for(int i = 0; i < _expression->Length(); i++)
+    {
+        auto nodule = _expression->Get(i);
+        if (nodule->GetType() == NoduleType::INPUT && !variables.Contains(nodule->GetValue()))
+        {
+            variables.Insert(nodule->GetValue());
+            variableCount++;
+        }
+    }
+
+    _differentVariablesOnExpression = variableCount;
+}
+
 void Expression::SetupExpression(std::string expression)
 {
     _expression = new LinkedList<Nodule*>();
@@ -130,14 +148,16 @@ void Expression::SetupExpression(std::string expression)
     for (int i = 0; i < tokens->Length(); i++)
     {
         auto value = tokens->Get(i);
-
         if (value == ")" || value == "(")
         {
+            if (value == ")" && startParentheses.Empty())
+                continue;
+
             auto nodule = ParseParenthesesNodule(value, startParentheses);
             _expression->Insert(nodule);
             continue;
         }
-
+       
         if (value == NOT)
         {
             auto next = tokens->Get(i + 1);
@@ -170,8 +190,13 @@ void Expression::SetupExpression(std::string expression)
 
     delete tokens;
 
-    if (_valuesWasSet && _values->Length() != _inputCount)
-        throw difference_between_inputs_and_variable_count_exception();
+    if (_valuesWasSet)
+    {
+        SetupVariableExpressionCount();
+
+        if (_values->Length() < _differentVariablesOnExpression)
+            throw difference_between_inputs_and_variable_count_exception();
+    }        
 }
 
 bool Expression::Evaluate()
@@ -202,6 +227,8 @@ bool Expression::Evaluate(LinkedList<InputValue>* values)
             input->SetCurrentValue(newValue);
         }
     }
+
+    SetupVariableExpressionCount();
 
     return Evaluate();
 }

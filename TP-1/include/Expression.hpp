@@ -19,6 +19,7 @@ class Expression
         bool _disableValuesMemoryDelete = false;
         bool _valuesWasSet = false;
         int _inputCount = 0;
+        int _differentVariablesOnExpression = 0;
 
         LinkedList<Nodule*>* _expression = nullptr;
         LinkedList<InputValue>* _values = nullptr;
@@ -28,6 +29,8 @@ class Expression
 
         bool FindValue(std::string key);
         bool FindValue(std::string key, LinkedList<InputValue>* values);
+
+        void SetupVariableExpressionCount();
     public:
         Expression(std::string expression, std::string values);
         Expression(std::string expression);
