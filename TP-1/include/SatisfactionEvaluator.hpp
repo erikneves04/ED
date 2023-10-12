@@ -28,7 +28,8 @@ class SatisfactionEvaluator
 
         void SetupVariablesIndex();
         bool HasVariableForIndex(int index);
-        
+        bool IsVariableIrreleant(std::string result, int index, LinkedList<std::string>* solutions);
+
         void ExecuteAllInputsCombination();
     public:
         SatisfactionEvaluator(std::string expression, std::string input);

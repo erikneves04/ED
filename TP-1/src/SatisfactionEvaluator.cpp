@@ -109,7 +109,7 @@ bool SatisfactionEvaluator::HasSolution()
         if (input == EXISTS && !ExistsAssert(i))
             return false;
 
-        else if (input == FOR_ALL && !ForAllAssert(i))
+        else if (input == FOR_ALL && _asserts.Length() != _allInputsCombination.Length())
             return false;
     }
 
@@ -129,20 +129,53 @@ std::string ConvertValueListIntoString(LinkedList<InputValue>* values)
     return result;
 }
 
+bool SatisfactionEvaluator::IsVariableIrreleant(std::string result, int index, LinkedList<std::string>* solutions)
+{
+    std::string withOtherValue = result;
+    withOtherValue[index] = (result[index] == '0') ? '1' : '0';
+    
+    if (solutions->Contains(withOtherValue))
+        return true;
+
+    for(unsigned int i = 0; i < (unsigned int)solutions->Length(); i++)
+    {
+        auto solution = solutions->Get(i);
+
+        for(unsigned int j = 0; j < result.length(); j++)
+        {
+            if (solution[j] == SOLUTION_IRRELEVANT_OUTPUT || result[j] == SOLUTION_IRRELEVANT_OUTPUT || solution[j] == result[j])
+            {
+                if (j == solution.length() - 1)
+                    return true;
+                else
+                    continue;
+            }
+
+            if (solution[j] != result[j])
+                break; 
+
+            if (j == solution.length() - 1)
+                return true;
+        }
+    }
+    
+    return false;
+}
+
 std::string SatisfactionEvaluator::GetSolution()
 {
     if (_asserts.Length() == 1)
         return ConvertValueListIntoString(_asserts.Get(0));
 
-    LinkedList<std::string> solutions;
+    LinkedList<std::string>* solutions = new LinkedList<std::string>();
     for(int i = 0; i < _asserts.Length(); i++)
     {
         LinkedList<InputValue>* values = _asserts.Get(i);
         std::string solution = ConvertValueListIntoString(values);
-        solutions.Insert(solution);
+        solutions->Insert(solution);
     }
 
-    std::string result = solutions.Get(0);
+    std::string result = solutions->Get(0);
 
     for(unsigned int i = 0; i < _input.length(); i++)
     {
@@ -150,13 +183,17 @@ std::string SatisfactionEvaluator::GetSolution()
         
         if (input == EXISTS || input == FOR_ALL)
         {
-            std::string withOtherValue = result;
-            withOtherValue[i] = (result[i] == '0') ? '1' : '0';
-            
-            if (solutions.Contains(withOtherValue))
+            if (IsVariableIrreleant(result, i, solutions))
+            {
                 result[i] = SOLUTION_IRRELEVANT_OUTPUT;
+
+                if (!solutions->Contains(result))
+                    solutions->Insert(result);
+            }
+                
         }
     }
 
+    delete solutions;
     return result;
 }
