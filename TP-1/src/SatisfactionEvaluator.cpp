@@ -24,15 +24,19 @@ SatisfactionEvaluator::~SatisfactionEvaluator()
         LinkedList<InputValue>* inputList = _allInputsCombination.Get(i);
         delete inputList;
     }
+
+    delete _variablesIndex;
 }
 
 void SatisfactionEvaluator::SetupVariablesIndex()
 {
+    _variablesIndex = new LinkedList<int>();
+
     for (unsigned int i = 0; i < _input.length(); i++)
     {
         std::string input(1, _input[i]);
         if (input == EXISTS || input == FOR_ALL)
-            _variablesIndex.Insert(i);
+            _variablesIndex->Insert(i);
     } 
 }
 
@@ -44,17 +48,18 @@ bool SatisfactionEvaluator::HasVariableForIndex(int index)
 
 void SatisfactionEvaluator::ExecuteAllInputsCombination()
 {
-    auto expression = Expression(_expression);
+    auto expression = new Expression(_expression);
 
-    auto inputExchanger = InputExchanger(_input, _variablesIndex);
-    auto allInputsCombination = inputExchanger.GetAllInputsCombination();
+    auto inputExchanger = new InputExchanger(_input, _variablesIndex);
+    auto allInputsCombination = inputExchanger->GetAllInputsCombination();
 
     while(!allInputsCombination->Empty())
     {
+
         auto inputList = allInputsCombination->Remove();
         _allInputsCombination.Insert(inputList);
 
-        auto result = expression.Evaluate(inputList);
+        auto result = expression->Evaluate(inputList);
 
         if (!result)            
             continue;
@@ -63,6 +68,8 @@ void SatisfactionEvaluator::ExecuteAllInputsCombination()
     }
 
     delete allInputsCombination;
+    delete inputExchanger;
+    delete expression;
 }
 
 bool SatisfactionEvaluator::ForAllAssert(int index)

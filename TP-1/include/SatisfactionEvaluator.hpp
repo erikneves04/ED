@@ -17,7 +17,7 @@ class SatisfactionEvaluator
         std::string _expression;
         std::string _input;
         
-        LinkedList<int> _variablesIndex;
+        LinkedList<int>* _variablesIndex;
         LinkedList<LinkedList<InputValue>*> _allInputsCombination;
         LinkedList<LinkedList<InputValue>*> _asserts;
 
