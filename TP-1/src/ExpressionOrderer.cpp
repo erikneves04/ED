@@ -70,18 +70,10 @@ void ExpressionOrderer::ExecutePendingOperations()
 
 void ExpressionOrderer::ExecuteAllParenthesesNodules()
 {
-    while(_operationStack->OnTop()->GetType() != NoduleType::START_PARENTHESES)
+    while(!_operationStack->Empty() && _operationStack->OnTop()->GetType() != NoduleType::START_PARENTHESES)
     {
         auto operation = (OperationNodule*)_operationStack->Remove();
-        auto input1 = _inputStack->Remove();
-        auto input2 = _inputStack->Remove();
-
-        auto result = operation->PerformOperation(input1, input2);
-        auto resultNodule = new InputNodule(RESULT_NODULE_NAME, result);
-        _inputStack->Insert(resultNodule);
-
-        DeleteIfIsResultNodule(input1);
-        DeleteIfIsResultNodule(input2);
+        ExecuteOperationNodule(operation);
     }
 
     _operationStack->Remove();
