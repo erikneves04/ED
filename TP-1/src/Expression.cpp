@@ -55,26 +55,28 @@ void Expression::SetupValues(std::string values)
 LinkedList<std::string>* ParseExpressionString(std::string expression)
 {
     LinkedList<std::string>* tokens = new LinkedList<std::string>();
-    std::string currentToken;
+    std::string currentToken = "";
 
-    for (char ch : expression) 
+    expression += " ";
+
+    for(unsigned int i = 0; i < expression.length(); i++)
     {
-        if (ch == ' ') 
+        std::string current(1, expression[i]);
+        if (current == " " && i == 0)
+            continue;
+
+        if (current == " ")
         {
-            if (!currentToken.empty()) 
+            if (currentToken != "")
             {
                 tokens->Insert(currentToken);
-                currentToken.clear();
+                currentToken = "";
             }
-        } else 
-        {
-            currentToken += ch;
         }
-    }
-    
-    if (!currentToken.empty()) 
-    {
-        tokens->Insert(currentToken);
+        else
+        {
+            currentToken += current;
+        }
     }
 
     return tokens;
@@ -129,8 +131,6 @@ void Expression::SetupExpression(std::string expression)
     for (int i = 0; i < tokens->Length(); i++)
     {
         auto value = tokens->Get(i);
-        if(value.empty())
-            continue;
 
         if (value == ")" || value == "(")
         {
