@@ -30,7 +30,10 @@ class SatisfactionEvaluator
 
         void SetupVariablesIndex();
         bool HasVariableForIndex(int index);
-        bool IsVariableIrreleant(std::string result, int index, LinkedList<std::string>* solutions);
+
+        bool IsVariableIrreleant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails);
+        bool IsExistsIrrelevant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails);
+        bool IsForAllIrrelevant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails);
 
         void ExecuteAllInputsCombination();
     public:

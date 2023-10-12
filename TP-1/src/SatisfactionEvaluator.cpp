@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 #include "InputNodule.hpp"
 #include "Expression.hpp"
@@ -129,7 +130,42 @@ std::string ConvertValueListIntoString(LinkedList<InputValue>* values)
     return result;
 }
 
-bool SatisfactionEvaluator::IsVariableIrreleant(std::string result, int index, LinkedList<std::string>* solutions)
+bool IsExistsDeterminant(char value, std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails)
+{
+    bool isDeterminant = false;
+
+    for(int i = 0; i < solutions->Length(); i++)
+    {
+        std::string solution = solutions->Get(i);
+        solution[index] = value;
+        
+        if (fails->Contains(solution))
+            break;
+        else if (i == solutions->Length() - 1)
+        {
+            isDeterminant = true;
+            break;
+        }
+    }
+
+    if (isDeterminant)
+        result[index] = value;        
+
+    return isDeterminant;
+}
+
+bool SatisfactionEvaluator::IsExistsIrrelevant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails)
+{
+    bool zeroIsDeterminant = IsExistsDeterminant('0', result, index, solutions, fails);
+    bool oneIsDeterminant = IsExistsDeterminant('1', result, index, solutions, fails);
+
+    if (zeroIsDeterminant && oneIsDeterminant)
+        return true;
+    else
+        return false;
+}
+
+bool SatisfactionEvaluator::IsForAllIrrelevant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails)
 {
     std::string withOtherValue = result;
     withOtherValue[index] = (result[index] == '0') ? '1' : '0';
@@ -159,6 +195,18 @@ bool SatisfactionEvaluator::IsVariableIrreleant(std::string result, int index, L
         }
     }
     
+    return false;
+}
+
+bool SatisfactionEvaluator::IsVariableIrreleant(std::string& result, int index, LinkedList<std::string>* solutions, LinkedList<std::string>* fails)
+{
+    std::string input(1, _input[index]);
+
+    if (input == EXISTS)
+        return IsExistsIrrelevant(result, index, solutions, fails);
+    else if (input == FOR_ALL)
+        return IsForAllIrrelevant(result, index, solutions, fails);
+
     return false;
 }
 
@@ -195,7 +243,7 @@ std::string SatisfactionEvaluator::GetSolution()
         
         if (input == EXISTS || input == FOR_ALL)
         {
-            if (IsVariableIrreleant(result, i, solutions))
+            if (IsVariableIrreleant(result, i, solutions, fails))
             {
                 result[i] = SOLUTION_IRRELEVANT_OUTPUT;
 
@@ -206,6 +254,8 @@ std::string SatisfactionEvaluator::GetSolution()
         }
     }
 
-    delete solutions;
+    //delete solutions;
+    //delete fails;
+
     return result;
 }
