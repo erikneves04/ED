@@ -14,6 +14,36 @@ class LinkedList
 
         int _size;
 
+        int _lastGetIndex = -1;
+        Node<DataType>* _lastGetNode = nullptr;
+
+        DataType LinearGet(int index)
+        {
+            Node<DataType>* current;
+
+            if (index <= _size / 2)
+            {
+                current = _head;
+                for (int i = 0; i < index; i++)
+                {
+                    current = current->next;
+                }
+            }
+            else
+            {
+                current = _tail;
+                for (int i = _size - 1; i > index; i--)
+                {
+                    current = current->previous;
+                }
+            }
+
+            _lastGetIndex = index;
+            _lastGetNode = current;
+
+            return current->data;
+        }
+
     public:
         LinkedList()
         {
@@ -102,14 +132,40 @@ class LinkedList
             if (index < 0 || index >= _size)
                 throw empty_set_exception();
 
-            Node<DataType>* current = _head;
+            if (_lastGetIndex == -1)
+                return LinearGet(index);
 
-            for (int i = 0; i < index; i++)
+            if (_lastGetIndex == index - 1)
             {
-                current = current->next;
+                _lastGetIndex = index;
+                _lastGetNode = _lastGetNode->next;
+
+                return _lastGetNode->data;
             }
 
-            return current->data;
+            if (_lastGetIndex == index + 1)
+            {
+                _lastGetIndex = index;
+                _lastGetNode = _lastGetNode->previous;
+
+                return _lastGetNode->data;
+            }
+
+            if (_lastGetIndex < index)
+            {
+                auto current = _lastGetNode;
+                for(int i = index; i < index; i++)
+                {
+                    current = current->next;
+                }
+
+                _lastGetIndex = index;
+                _lastGetNode = current;
+
+                return current->data;
+            }
+            
+            return LinearGet(index);
         }
 
         DataType Last()
