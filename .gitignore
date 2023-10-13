@@ -31,3 +31,6 @@
 *.out
 *.app
 TP-1/bin/main
+TP-1/bin/tester
+TP-1/.vscode/settings.json
+TP-1/.vscode/settings.json
