@@ -88,6 +88,8 @@ LinkedList<std::string>* SatisfactionEvaluator::ConvertValueListIntoStringList(L
 void SatisfactionEvaluator::ExecuteAllInputsCombination()
 {
     auto expression = new Expression(_expression);
+    expression->SetupMemoryValues(_input);
+    expression->SetupVariableNodules(_input);
 
     auto inputExchanger = new InputExchanger(_input, _variablesIndex);
     auto allInputsCombination = inputExchanger->GetAllInputsCombination();
@@ -97,7 +99,18 @@ void SatisfactionEvaluator::ExecuteAllInputsCombination()
         auto inputList = allInputsCombination->Remove();
         _allInputsCombination.Insert(inputList);
 
+        auto values = new LinkedList<InputValue>();
+        for(int i = 0; i < inputList->Length(); i++)
+        {
+            if (!HasVariableForIndex(i))
+                continue;
+
+            auto value = inputList->Get(i);
+            values->Insert(value);
+        }
+
         auto result = expression->Evaluate(inputList);
+        delete values;
 
         if (result)        
             _trueCombinations->Insert(inputList); 
@@ -119,17 +132,14 @@ bool SatisfactionEvaluator::ForAllAssert(int index)
         char newChar = assert[index] == '0' ? '1' : '0';
         assert[index] = newChar;
 
-        if (!_solutions->Contains(assert))
+        if (!_solutions->Contains(assert) || _fails->Contains(assert))
         {
             found = false;
             break;
         }
     }
     
-    if (found)
-        return true;
-
-    return false;
+    return found;
 }
 
 bool SatisfactionEvaluator::ExistsAssert(int index)

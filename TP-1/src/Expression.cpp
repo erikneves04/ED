@@ -18,14 +18,12 @@ Expression::Expression(std::string expression, std::string values)
 
 Expression::Expression(std::string expression)
 {
+    _variableNodules = new LinkedList<InputNodule*>();
     SetupExpression(expression);
-     _nodulesWithVariables = new LinkedList<Nodule*>();
 }
 
 Expression::~Expression()
 {
-    delete _nodulesWithVariables;
-
     for (int i = 0; i < _expression->Length(); i++)
     {
         auto nodule = _expression->Get(i);
@@ -36,6 +34,12 @@ Expression::~Expression()
 
     if (_valuesWasSet && !_disableValuesMemoryDelete)
         delete _values;
+
+    if (_valuesMemory != nullptr)
+        delete[] _valuesMemory;
+
+    if (_variableNodules != nullptr)
+        delete _variableNodules;
 }
 
 void Expression::SetupValues(std::string values)
@@ -107,15 +111,63 @@ bool Expression::FindValue(std::string key, LinkedList<InputValue>* values)
 {
     if(!_valuesWasSet)
         throw value_not_set_exception();
+
+    if (_valuesMemory == nullptr)
+    {    for (int i = 0; i < values->Length(); i++)
+        {
+            auto pair = values->Get(i);
+            if(pair.key == key)
+                return pair.value;
+        }
+
+        throw value_not_set_exception();
+    }
+
+    int keyIndex = stoi(key);
     
+    if (keyIndex >= _inputCount || keyIndex < 0)
+        throw value_not_set_exception();        
+
+    return _valuesMemory[keyIndex];
+}
+
+void Expression::SetupMemoryValues(std::string input)
+{
+    unsigned int len = input.length();
+    
+    _valuesWasSet = true;
+    _valuesMemory = new bool[len];
+    
+    for (unsigned int i = 0; i < len; i++)
+    {
+        auto value = input[i];
+        std::string index = std::to_string(i);
+
+        _valuesMemory[i] = value == '1';
+    }
+
+    for(int i = 0; i < _expression->Length(); i++)
+    {   
+        auto nodule = _expression->Get(i);
+        if(nodule->GetType() == NoduleType::INPUT)
+        {
+            auto input = (InputNodule*)nodule;
+            auto newValue = FindValue(input->GetValue());
+
+            input->SetCurrentValue(newValue);
+        }
+    }
+}
+
+void Expression::SetMemoryValue(LinkedList<InputValue>* values)
+{
     for (int i = 0; i < values->Length(); i++)
     {
-        auto pair = values->Get(i);
-        if(pair.key == key)
-            return pair.value;
+        auto value = values->Get(i);
+        auto index = stoi(value.key);
+
+        _valuesMemory[index] = value.value;
     }
-    
-    throw value_not_set_exception();
 }
 
 bool Expression::FindValue(std::string key)
@@ -188,34 +240,50 @@ void Expression::SetupExpression(std::string expression)
         throw difference_between_inputs_and_variable_count_exception();
 }
 
+void Expression::SetupVariableNodules(std::string input)
+{
+    for(int i = 0; i < _expression->Length(); i++)
+    {
+        auto nodule = _expression->Get(i);
+        if(nodule->GetType() == NoduleType::INPUT)
+        {
+            auto inputNodule = (InputNodule*)nodule;
+            
+            auto index = stoi(inputNodule->GetValue());
+            auto flag = input[index];
+
+            if(!(flag == '0' || flag == '1'))
+                _variableNodules->Insert(inputNodule);
+        }
+    }
+}
+
 bool Expression::Evaluate()
 {
     if (!_valuesWasSet)
         throw value_not_set_exception();
-
+        
     return ExpressionOrderer().Perform(_expression);
 }
 
 bool Expression::Evaluate(LinkedList<InputValue>* values)
 {       
-    if (values->Length() < _differentVariablesOnExpression)
-        throw difference_between_inputs_and_variable_count_exception();
-
     _valuesWasSet = true;
     _disableValuesMemoryDelete = true;
 
-    _values = values;
-
-    for(int i = 0; i < _expression->Length(); i++)
+    SetMemoryValue(values);
+    
+    for(int i = 0; i < _variableNodules->Length(); i++)
     {   
-        auto nodule = _expression->Get(i);
+        auto nodule = _variableNodules->Get(i);
         if(nodule->GetType() == NoduleType::INPUT)
         {
             auto input = (InputNodule*)nodule;
             auto newValue = FindValue(input->GetValue(), values);
+
             input->SetCurrentValue(newValue);
         }
     }
-
+    
     return Evaluate();
 }

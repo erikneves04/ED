@@ -23,12 +23,17 @@ class Expression
 
         LinkedList<Nodule*>* _expression = nullptr;
         LinkedList<InputValue>* _values = nullptr;
+        LinkedList<InputNodule*>* _variableNodules = nullptr;
 
+        bool* _valuesMemory = nullptr;
+        
         void SetupValues(std::string values);
         void SetupExpression(std::string expression);
 
         bool FindValue(std::string key);
         bool FindValue(std::string key, LinkedList<InputValue>* values);
+
+        void SetMemoryValue(LinkedList<InputValue>* values);
     public:
         Expression(std::string expression, std::string values);
         Expression(std::string expression);
@@ -37,6 +42,8 @@ class Expression
         bool Evaluate();
         bool Evaluate(LinkedList<InputValue>* values);
 
+        void SetupMemoryValues(std::string input);
+        void SetupVariableNodules(std::string input);
 };
 
 #endif
