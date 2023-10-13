@@ -29,8 +29,6 @@ class Expression
 
         bool FindValue(std::string key);
         bool FindValue(std::string key, LinkedList<InputValue>* values);
-
-        void SetupVariableExpressionCount();
     public:
         Expression(std::string expression, std::string values);
         Expression(std::string expression);

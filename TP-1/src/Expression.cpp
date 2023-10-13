@@ -14,16 +14,18 @@ Expression::Expression(std::string expression, std::string values)
 {
     SetupValues(values);
     SetupExpression(expression);
-    SetupVariableExpressionCount();
 }
 
 Expression::Expression(std::string expression)
 {
     SetupExpression(expression);
+     _nodulesWithVariables = new LinkedList<Nodule*>();
 }
 
 Expression::~Expression()
 {
+    delete _nodulesWithVariables;
+
     for (int i = 0; i < _expression->Length(); i++)
     {
         auto nodule = _expression->Get(i);
@@ -121,26 +123,11 @@ bool Expression::FindValue(std::string key)
     return FindValue(key, _values);
 }
 
-void Expression::SetupVariableExpressionCount()
-{
-    int variableCount = 0;
-    LinkedList<std::string> variables;
-
-    for(int i = 0; i < _expression->Length(); i++)
-    {
-        auto nodule = _expression->Get(i);
-        if (nodule->GetType() == NoduleType::INPUT && !variables.Contains(nodule->GetValue()))
-        {
-            variables.Insert(nodule->GetValue());
-            variableCount++;
-        }
-    }
-
-    _differentVariablesOnExpression = variableCount;
-}
-
 void Expression::SetupExpression(std::string expression)
 {
+    _differentVariablesOnExpression = 0;
+    LinkedList<std::string> variables;
+
     _expression = new LinkedList<Nodule*>();
 
     auto tokens = ParseExpressionString(expression);
@@ -186,6 +173,12 @@ void Expression::SetupExpression(std::string expression)
         {
             auto nodule = new InputNodule(value);
             _expression->Insert(nodule);
+        }
+
+        if (!variables.Contains(value))
+        {
+            variables.Insert(value);
+            _differentVariablesOnExpression++;
         }
     }
 
