@@ -99,28 +99,33 @@ void SatisfactionEvaluator::ExecuteAllInputsCombination()
         auto inputList = allInputsCombination->Remove();
         _allInputsCombination.Insert(inputList);
 
-        auto values = new LinkedList<InputValue>();
-        for(int i = 0; i < inputList->Length(); i++)
-        {
-            if (!HasVariableForIndex(i))
-                continue;
-
-            auto value = inputList->Get(i);
-            values->Insert(value);
-        }
-
-        auto result = expression->Evaluate(inputList);
-        delete values;
-
-        if (result)        
-            _trueCombinations->Insert(inputList); 
-        else
-            _falseCombinations->Insert(inputList);
+        ExecuteInputCombination(expression, inputList);
     }
 
     delete allInputsCombination;
     delete inputExchanger;
     delete expression;
+}
+
+void SatisfactionEvaluator::ExecuteInputCombination(Expression* expression, LinkedList<InputValue>* inputList)
+{
+    auto values = new LinkedList<InputValue>();
+    for(int i = 0; i < inputList->Length(); i++)
+    {
+        if (!HasVariableForIndex(i))
+            continue;
+
+        auto value = inputList->Get(i);
+        values->Insert(value);
+    }
+
+    auto result = expression->Evaluate(inputList);
+    delete values;
+
+    if (result)        
+        _trueCombinations->Insert(inputList); 
+    else
+        _falseCombinations->Insert(inputList);
 }
 
 bool SatisfactionEvaluator::ForAllAssert(int index)

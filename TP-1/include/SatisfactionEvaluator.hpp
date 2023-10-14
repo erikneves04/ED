@@ -98,6 +98,14 @@ class SatisfactionEvaluator
         void ExecuteAllInputsCombination();
 
         /**
+         * @brief Executa uma combinação de valores de entrada.
+         *
+         * @param expression A expressão a ser avaliada.
+         * @param values A lista de valores de entrada.
+         */
+        void ExecuteInputCombination(Expression* expression, LinkedList<InputValue>* inputList);
+
+        /**
          * @brief Converte uma lista de valores de entrada em uma única string.
          *
          * @param values A lista de valores de entrada.
