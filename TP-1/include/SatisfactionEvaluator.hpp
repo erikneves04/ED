@@ -6,6 +6,7 @@
 #include <string>
 
 #include "InputNodule.hpp"
+#include "Expression.hpp"
 #include "DataStructures/LinkedList.hpp"
 
 #define EXISTS ("e")
