@@ -18,7 +18,7 @@ ExpressionOrderer::~ExpressionOrderer()
     delete _operationStack;
 }
 
-void DeleteIfIsResultNodule(InputNodule* nodule)
+void ExpressionOrderer::DeleteIfIsResultNodule(InputNodule* nodule)
 {
     if (nodule->GetValue() == RESULT_NODULE_NAME)
         delete nodule;

@@ -58,6 +58,12 @@ class ExpressionOrderer
          * @return true se o valor de entrada foi removido com sucesso, false caso contrário.
          */
         bool TakeLastInputValue();
+
+        /**
+         * @brief Libera a memória alocada por um nódulo caso ele tenha sido criado internamente
+         * nessa classe, em caso contrário a operação de liberação não será executada.
+         */
+        void DeleteIfIsResultNodule(InputNodule* nodule);
     public:
         /**
          * @brief Construtor da classe ExpressionOrderer.
