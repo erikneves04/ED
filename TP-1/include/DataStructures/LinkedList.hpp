@@ -28,6 +28,14 @@ class LinkedList
         int _lastGetIndex = -1;
         Node<DataType>* _lastGetNode = nullptr;
 
+        /**
+         * @brief Obtém o elemento na posição especificada da lista, com uma busca linar
+         * que pode ser iniciada tanto do primeiro elemento quanto do último, a depender
+         * do caminho mais eficiente.
+         *
+         * @param index A posição do elemento desejado na lista.
+         * @return O elemento na posição especificada.
+         */
         DataType LinearGet(int index)
         {
             Node<DataType>* current;
@@ -166,7 +174,11 @@ class LinkedList
         }
 
         /**
-         * @brief Obtém o elemento na posição especificada da lista.
+         * @brief Obtém o elemento na posição especificada da lista. Esse método faz um
+         * gerênciamento interno visando melhorar a performance de acesso aos elementos,
+         * avaliando de que ponto da lista é mais viável começar a busca e armazenando
+         * informações em um formato similar ao cache para permitir que iterações tenham
+         * complexidade O(1).
          *
          * @param index A posição do elemento desejado na lista.
          * @return O elemento na posição especificada.
