@@ -55,7 +55,7 @@ std::string Graph::OrderedVertices()
 
     for(int i = 0; i < orderedVertices->Length(); i++)
     {
-        result += std::to_string(orderedVertices->Get(i)->GetId());
+        result += std::to_string(orderedVertices->Get(i)->GetColor());
         
         if (i < orderedVertices->Length() - 1)
             result += " ";
