@@ -43,6 +43,27 @@ LinkedList<Vertex*>* GraphOrderer::Sort(LinkedList<Vertex*>* list)
 
 LinkedList<Vertex*>* GraphOrderer::BubbleSort(LinkedList<Vertex*>* list)
 {
+    bool swapped;
+
+    for (int i = 0; i < list->Length() - 1; i++) 
+    {
+        swapped = false;
+        for (int j = 0; j < list->Length() - i - 1; j++) 
+        {
+            auto vertex1 = list->GetNode(j);
+            auto vertex2 = list->GetNode(j + 1);
+
+            if (vertex1->data > vertex2->data) 
+            {
+                list->InvertNodeContent(vertex1, vertex2);
+                swapped = true;
+            }
+        }
+ 
+        if (swapped == false)
+            break;
+    }
+
     return list;
 }
 
