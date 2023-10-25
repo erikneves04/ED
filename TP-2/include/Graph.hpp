@@ -3,16 +3,20 @@
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
+#include <string>
+
 #include "Vertex.hpp"
 #include "LinkedList.hpp"
+#include "GraphOrderer.hpp"
 
 class Graph
 {
     private:
         LinkedList<Vertex*>* _vertices;
+        GraphOrderer* _orderer;
 
     public:
-        Graph();
+        Graph(char sortOption);
         ~Graph();
 
         void AddVertex(Vertex* vertex);
@@ -22,6 +26,8 @@ class Graph
         Vertex* GetVertex(int index);
 
         bool IsGreedy();
+        std::string OrderedVertices();
+
         void SetVertexColor(int index, int color);
 
         int VertexCount();

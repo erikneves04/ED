@@ -3,15 +3,18 @@
 #include "Graph.hpp"
 #include "Vertex.hpp"
 #include "LinkedList.hpp"
+#include "GraphOrderer.hpp"
 
-Graph::Graph()
+Graph::Graph(char sortOption)
 {
     _vertices = new LinkedList<Vertex*>();
+    _orderer = new GraphOrderer(sortOption);
 }
 
 Graph::~Graph()
 {
     delete _vertices;
+    delete _orderer;
 }
 
 void Graph::AddVertex(Vertex* vertex)
@@ -45,6 +48,22 @@ bool Graph::IsGreedy()
     return true;
 }
 
+std::string Graph::OrderedVertices()
+{
+    LinkedList<Vertex*>* orderedVertices = _orderer->Sort(_vertices);
+    std::string result = "";
+
+    for(int i = 0; i < orderedVertices->Length(); i++)
+    {
+        result += std::to_string(orderedVertices->Get(i)->GetId());
+        
+        if (i < orderedVertices->Length() - 1)
+            result += " ";
+    }
+
+    return result;
+}
+
 void Graph::SetVertexColor(int index, int color)
 {
     _vertices->Get(index)->SetColor(color);
@@ -69,11 +88,13 @@ int Graph::EdgeCount()
 
 Graph* Graph::BuildFromIoStream()
 {
-    int verticesCount, edgesCount, id, color;
+    char sortMethod;
+    std::cin >> sortMethod;
 
+    int verticesCount, edgesCount, id, color;
     std::cin >> verticesCount;
 
-    Graph* graph = new Graph();
+    Graph* graph = new Graph(sortMethod);
 
     for(int i = 0; i < verticesCount; i++)
     {
