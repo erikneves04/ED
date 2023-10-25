@@ -117,20 +117,6 @@ class LinkedList
 
                 return _lastGetNode;
             }
-
-            if (_lastGetIndex < index)
-            {
-                auto current = _lastGetNode;
-                for(int i = index; i < index; i++)
-                {
-                    current = current->next;
-                }
-
-                _lastGetIndex = index;
-                _lastGetNode = current;
-
-                return current;
-            }
             
             return LinearGet(index);
         }
