@@ -3,7 +3,7 @@
 Vertex::Vertex(int id)
 {
     _id = id;
-    _color = -1;
+    _color = UNDEFINED_COLOR;
 
     _adjacentVertices = new LinkedList<Vertex*>();
 }
@@ -51,32 +51,36 @@ LinkedList<Vertex*>* Vertex::GetAdjacentVertices()
 
 bool Vertex::IsGreedy()
 {
-    if (_color == -1)
+    if (_color == UNDEFINED_COLOR)
         return false;
 
-    if (_color == 0)
+    if (_color == 1)
         return true;
 
-    if (_adjacentVertices->Empty() == 0)
+    if (_adjacentVertices->Empty())
         return false;
 
-    bool* expectedColors = new bool[_color];
+    bool* expectedColors = new bool[_color - 1];
 
     for(int i = 0; i < _adjacentVertices->Length(); i++)
     {
         Vertex* current = _adjacentVertices->Get(i);
 
-        if (current->GetColor() == -1 || current->GetColor() >= _color)
+        if (current->GetColor() == UNDEFINED_COLOR || current->GetColor() >= _color)
             continue;
 
         expectedColors[current->GetColor()] = true;
     }
 
-    for(int i = 0; i < _color; i++)
+    for(int i = 1; i < _color; i++)
     {
-        if (expectedColors[i] == false)
+        if (!expectedColors[i])
+        {
+            delete[] expectedColors;
             return false;
+        }
     }
 
+    delete[] expectedColors;
     return true;
 }

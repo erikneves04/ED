@@ -19,10 +19,9 @@ void Graph::AddVertex(Vertex* vertex)
     _vertices->Insert(vertex);
 }
 
-void Graph::AddEdge(Vertex* vertex1, Vertex* vertex2)
+void Graph::AddEdge(Vertex* origin, Vertex* destiny)
 {
-    vertex1->AddAdjacentVertex(vertex2);
-    vertex2->AddAdjacentVertex(vertex1);
+    origin->AddAdjacentVertex(destiny);
 }
 
 LinkedList<Vertex*>* Graph::GetVertices()
@@ -70,7 +69,7 @@ int Graph::EdgeCount()
 
 Graph* Graph::BuildFromIoStream()
 {
-    int verticesCount, edgesCount, vertex1, vertex2, color;
+    int verticesCount, edgesCount, id, color;
 
     std::cin >> verticesCount;
 
@@ -85,12 +84,12 @@ Graph* Graph::BuildFromIoStream()
     {
         std::cin >> edgesCount;
 
+        Vertex* origin = graph->GetVertex(i);
         for(int j = 0; j < edgesCount; j++)
         {
-            std::cin >> vertex1;
-            std::cin >> vertex2;
-
-            graph->AddEdge(graph->GetVertex(vertex1), graph->GetVertex(vertex2));
+            std::cin >> id;
+            Vertex* destiny = graph->GetVertex(id);
+            graph->AddEdge(origin, destiny);
         }
     }
 
@@ -101,4 +100,20 @@ Graph* Graph::BuildFromIoStream()
     }
 
     return graph;
+}
+
+void Graph::Print()
+{
+    for(int i = 0; i < _vertices->Length(); i++)
+    {
+        Vertex* current = _vertices->Get(i);
+
+        std::cout << "Vertex " << current->GetId() << " color: " << current->GetColor() << std::endl;
+
+        for(int j = 0; j < current->GetAdjacentVertices()->Length(); j++)
+        {
+            std::cout << "    Adjacent vertex " << current->GetAdjacentVertices()->Get(j)->GetId() << std::endl;
+        }
+        std::cout << "    Is greedy: " << current->IsGreedy() << std::endl;
+    }
 }

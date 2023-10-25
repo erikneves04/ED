@@ -5,6 +5,8 @@
 
 #include "LinkedList.hpp"
 
+#define UNDEFINED_COLOR (-1)
+
 class invalid_color_change_exception
 {};
 

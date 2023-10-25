@@ -28,6 +28,8 @@ class Graph
         int EdgeCount();
 
         static Graph* BuildFromIoStream();
+
+        void Print();
 };
 
 #endif
