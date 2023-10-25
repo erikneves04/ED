@@ -35,3 +35,43 @@ GraphOrderer::GraphOrderer(char option)
         break;
     }
 }
+
+LinkedList<Vertex*>* GraphOrderer::Sort(LinkedList<Vertex*>* list)
+{
+    return _ordererMethod(list);
+}
+
+LinkedList<Vertex*>* GraphOrderer::BubbleSort(LinkedList<Vertex*>* list)
+{
+    return list;
+}
+
+LinkedList<Vertex*>* GraphOrderer::SelectionSort(LinkedList<Vertex*>* list)
+{
+    return list;
+}
+
+LinkedList<Vertex*>* GraphOrderer::InsertionSort(LinkedList<Vertex*>* list)
+{
+    return list;
+}
+
+LinkedList<Vertex*>* GraphOrderer::QuickSort(LinkedList<Vertex*>* list)
+{
+    return list;
+}
+
+LinkedList<Vertex*>* GraphOrderer::MergeSort(LinkedList<Vertex*>* list)
+{
+    return list;
+}
+
+LinkedList<Vertex*>* GraphOrderer::HeadSort(LinkedList<Vertex*>* list)
+{
+    return list;
+}
+
+LinkedList<Vertex*>* GraphOrderer::CustomSort(LinkedList<Vertex*>* list)
+{
+    return list;
+}

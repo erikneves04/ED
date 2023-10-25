@@ -13,15 +13,15 @@ class GraphOrderer
 {
     private:
         char _option;
-        LinkedList<Vertex*>* (GraphOrderer::*_ordererMethod)(LinkedList<Vertex*>* list);
+        LinkedList<Vertex*>* (*_ordererMethod)(LinkedList<Vertex*>* list);
 
-        LinkedList<Vertex*>* BubbleSort(LinkedList<Vertex*>* list);
-        LinkedList<Vertex*>* SelectionSort(LinkedList<Vertex*>* list);
-        LinkedList<Vertex*>* InsertionSort(LinkedList<Vertex*>* list);
-        LinkedList<Vertex*>* QuickSort(LinkedList<Vertex*>* list);
-        LinkedList<Vertex*>* MergeSort(LinkedList<Vertex*>* list);
-        LinkedList<Vertex*>* HeadSort(LinkedList<Vertex*>* list);
-        LinkedList<Vertex*>* CustomSort(LinkedList<Vertex*>* list);
+        static LinkedList<Vertex*>* BubbleSort(LinkedList<Vertex*>* list);
+        static LinkedList<Vertex*>* SelectionSort(LinkedList<Vertex*>* list);
+        static LinkedList<Vertex*>* InsertionSort(LinkedList<Vertex*>* list);
+        static LinkedList<Vertex*>* QuickSort(LinkedList<Vertex*>* list);
+        static LinkedList<Vertex*>* MergeSort(LinkedList<Vertex*>* list);
+        static LinkedList<Vertex*>* HeadSort(LinkedList<Vertex*>* list);
+        static LinkedList<Vertex*>* CustomSort(LinkedList<Vertex*>* list);
 
     public:
         GraphOrderer(char option);

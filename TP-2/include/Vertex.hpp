@@ -33,5 +33,4 @@ class Vertex
         bool IsGreedy();
 };
 
-
 #endif
