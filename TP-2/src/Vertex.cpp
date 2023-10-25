@@ -84,3 +84,11 @@ bool Vertex::IsGreedy()
     delete[] expectedColors;
     return true;
 }
+
+bool Vertex::operator>(const Vertex& other)
+{
+    if (other._color == _color)
+        return _id > other._id;
+
+    return _color > other._color;
+}

@@ -44,6 +44,8 @@ struct Node
 template <class DataType> 
 class LinkedList
 {
+    friend class GraphOrderer;
+
     protected:
         Node<DataType>* _head;
         Node<DataType>* _tail;

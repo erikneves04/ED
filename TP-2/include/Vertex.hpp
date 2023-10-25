@@ -31,6 +31,8 @@ class Vertex
         LinkedList<Vertex*>* GetAdjacentVertices();
 
         bool IsGreedy();
+
+        bool operator>(const Vertex& other);
 };
 
 #endif
