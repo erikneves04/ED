@@ -20,8 +20,11 @@ int Vertex::GetId()
 
 void Vertex::SetColor(int color)
 {
-    if (color < 0 || _color != -1)
+    if (color < 0 || _color != UNDEFINED_COLOR)
         throw invalid_color_change_exception();
+
+    if (HasAdjacentColor(color))
+        throw unavailable_color_exception();
 
     _color = color;
 }
@@ -39,6 +42,17 @@ void Vertex::AddAdjacentVertex(Vertex* vertex)
     _adjacentVertices->Insert(vertex);
 }
 
+bool Vertex::HasAdjacentColor(int color)
+{
+    for(int i = 0; i < _adjacentVertices->Length(); i++)
+    {
+        if (_adjacentVertices->Get(i)->GetColor() == color)
+            return true;
+    }
+
+    return false;
+}
+
 bool Vertex::IsAdjacent(Vertex* vertex)
 {
     return _adjacentVertices->Contains(vertex);
@@ -51,16 +65,18 @@ LinkedList<Vertex*>* Vertex::GetAdjacentVertices()
 
 bool Vertex::IsGreedy()
 {
-    if (_color == UNDEFINED_COLOR)
-        return false;
-
     if (_color == 1)
         return true;
 
-    if (_adjacentVertices->Empty())
+    if (_color == UNDEFINED_COLOR || _adjacentVertices->Empty())
         return false;
 
-    bool* expectedColors = new bool[_color - 1];
+    unsigned int colorCount = _color - 1;    
+
+    if ((unsigned int)_adjacentVertices->Length() < colorCount)
+        return false;
+
+    bool* expectedColors = new bool[colorCount];
 
     for(int i = 0; i < _adjacentVertices->Length(); i++)
     {
@@ -69,10 +85,10 @@ bool Vertex::IsGreedy()
         if (current->GetColor() == UNDEFINED_COLOR || current->GetColor() >= _color)
             continue;
 
-        expectedColors[current->GetColor()] = true;
+        expectedColors[current->GetColor() - 1] = true;
     }
 
-    for(int i = 1; i < _color; i++)
+    for(unsigned int i = 0; i < colorCount; i++)
     {
         if (!expectedColors[i])
         {
@@ -85,10 +101,15 @@ bool Vertex::IsGreedy()
     return true;
 }
 
-bool Vertex::operator>(const Vertex& other)
+bool Vertex::IsBiggerThan(Vertex* other)
 {
-    if (other._color == _color)
-        return _id > other._id;
+    if (other->_color == _color)
+        return _id > other->_id;
 
-    return _color > other._color;
+    return _color > other->_color;
+}
+
+bool Vertex::IsLessThan(Vertex* other)
+{
+    return !IsBiggerThan(other);
 }

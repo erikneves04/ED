@@ -6,7 +6,11 @@
 GraphOrderer::GraphOrderer(char option)
 {
     _option = option;
+    SelectSortMethod(option);
+}
 
+void GraphOrderer::SelectSortMethod(char option)
+{
     switch (option)
     {
         case 'b':
@@ -25,7 +29,7 @@ GraphOrderer::GraphOrderer(char option)
             _ordererMethod = &MergeSort;
         break;
         case 'p':
-            _ordererMethod = &HeadSort;
+            _ordererMethod = &HeapSort;
         break;
         case 'y':
             _ordererMethod = &CustomSort;
@@ -53,7 +57,7 @@ LinkedList<Vertex*>* GraphOrderer::BubbleSort(LinkedList<Vertex*>* list)
             auto vertex1 = list->GetNode(j);
             auto vertex2 = list->GetNode(j + 1);
 
-            if (vertex1->data > vertex2->data) 
+            if (vertex1->data->IsBiggerThan(vertex2->data)) 
             {
                 list->InvertNodeContent(vertex1, vertex2);
                 swapped = true;
@@ -69,11 +73,43 @@ LinkedList<Vertex*>* GraphOrderer::BubbleSort(LinkedList<Vertex*>* list)
 
 LinkedList<Vertex*>* GraphOrderer::SelectionSort(LinkedList<Vertex*>* list)
 {
+    Node<Vertex*>* min = nullptr;
+
+    for (int i = 0; i < (list->Length() - 1); i++)
+    {
+        Node<Vertex*>* current = list->GetNode(i);
+        min = current;
+
+        for (int j = i; j < list->Length(); j++)
+        {
+            Node<Vertex*>* current_j = list->GetNode(j);
+            if (current_j->data->IsLessThan(min->data))
+                min = current_j;
+        }
+
+        list->InvertNodeContent(current, min);
+    }
+
     return list;
 }
 
 LinkedList<Vertex*>* GraphOrderer::InsertionSort(LinkedList<Vertex*>* list)
 {
+    Vertex* aux = nullptr;
+
+    for(int i = 0; i < list->Length(); i++)
+    {
+        aux = list->Get(i);
+        
+        int j = i - 1;
+        while((j >= 0) && aux->IsLessThan(list->GetNode(j)->data))
+        {
+            list->InvertNodeContent(list->GetNode(j+1), list->GetNode(j));
+            j--;
+        }
+        list->SetNodeContent(list->GetNode(j+1), aux);
+    }
+
     return list;
 }
 
@@ -87,7 +123,7 @@ LinkedList<Vertex*>* GraphOrderer::MergeSort(LinkedList<Vertex*>* list)
     return list;
 }
 
-LinkedList<Vertex*>* GraphOrderer::HeadSort(LinkedList<Vertex*>* list)
+LinkedList<Vertex*>* GraphOrderer::HeapSort(LinkedList<Vertex*>* list)
 {
     return list;
 }
