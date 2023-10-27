@@ -24,7 +24,7 @@ void Vertex::SetColor(int color)
         throw invalid_color_change_exception();
 
     if (HasAdjacentColor(color))
-        throw unavailable_color_exception();
+        throw unavailable_color_exception();        
 
     _color = color;
 }
