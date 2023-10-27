@@ -12,7 +12,12 @@ Graph::Graph(char sortOption)
 }
 
 Graph::~Graph()
-{
+{   
+    for(int i = 0; i < _vertices->Length(); i++)
+    {
+        delete _vertices->Get(i);
+    }
+
     delete _vertices;
     delete _orderer;
 }
@@ -55,7 +60,7 @@ std::string Graph::OrderedVertices()
 
     for(int i = 0; i < orderedVertices->Length(); i++)
     {
-        result += std::to_string(orderedVertices->Get(i)->GetColor());
+        result += std::to_string(orderedVertices->Get(i)->GetId());
         
         if (i < orderedVertices->Length() - 1)
             result += " ";
