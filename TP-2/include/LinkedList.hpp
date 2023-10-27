@@ -140,6 +140,18 @@ class LinkedList
             second->data = temp;
         }
 
+        /**
+         * @brief Troca o conteúdo de um nó.
+         *
+         * @param node O nó a ser atualizado.
+         * @param newData O novo dado.
+         */
+        void SetNodeContent(Node<DataType>* node, DataType newData)
+        {
+            if (node != nullptr)
+                node->data = newData;
+        }
+
     public:
 
         /**
@@ -164,7 +176,7 @@ class LinkedList
         {
             auto current = _head;
 
-            for(int i = 0; i<_size; i++)
+            for(int i = 0; i < _size; i++)
             {
                 auto next = current->next;
 
