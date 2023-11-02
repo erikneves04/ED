@@ -73,8 +73,8 @@ class GraphOrderer
         static LinkedList<Vertex*>* HeapSort(LinkedList<Vertex*>* list);
 
         /**
-         * @brief Responsável por aplicar o método CustomSort(desenvolvido especificamente para atender
-         * aos critérios desse trabalho) para ordenar uma lista.
+         * @brief Responsável por aplicar o método CustomSort(personalziado que pode conter elementos de diversas
+         * fontes distintas) para ordenar uma lista.
          * 
          * @param list A lista que será ordenada.
          * @return Um ponteiro para a lista ordenada.

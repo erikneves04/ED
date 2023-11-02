@@ -122,6 +122,29 @@ class Vertex
          * @return true caso esse vértice seja "menor" que o outro, false caso contrário.
          */
         bool IsLessThan(Vertex* other);
+
+        /**
+         * @brief Compara dois vértices, inicialmente com base no identificador como critério.
+         * 
+         * @return true caso esse vértice seja "igual" ao outro, false caso contrário.
+         */
+        bool Equals(Vertex* other);
+
+        /**
+         * @brief Compara dois vértices, inicialmente com base na cor e usa o identificador como critério
+         * de desempate.
+         * 
+         * @return true caso esse vértice seja "maior ou igual" ao outro, false caso contrário.
+         */
+        bool IsBiggerThanOrEqual(Vertex* other);
+
+        /**
+         * @brief Compara dois vértices, inicialmente com base na cor e usa o identificador como critério
+         * de desempate.
+         * 
+         * @return true caso esse vértice seja "menor ou igual" ao outro, false caso contrário.
+         */
+        bool IsLessThanOrEqual(Vertex* other);
 };
 
 #endif

@@ -3,6 +3,8 @@
 #ifndef LINKED_LIST_HPP
 #define LINKED_LIST_HPP
 
+#include "memlog.h"
+
 /**
  * @brief Exceção lançada quando uma operação é executada em uma lista vazia, ou acesso
  * inválido a algum item.
@@ -29,7 +31,7 @@ struct Node
     Node* next;
     Node* previous;
 };
-
+#include <iostream>
 /**
  * @file LinkedList.hpp
  * @brief Classe que representa uma lista encadeada em C++.
@@ -44,7 +46,8 @@ struct Node
 template <class DataType> 
 class LinkedList
 {
-    friend class GraphOrderer;
+    private:
+        int _identifier;
 
     protected:
         Node<DataType>* _head;
@@ -71,7 +74,7 @@ class LinkedList
             {
                 current = _head;
                 for (int i = 0; i < index; i++)
-                {
+                {                    
                     current = current->next;
                 }
             }
@@ -87,69 +90,13 @@ class LinkedList
             _lastGetIndex = index;
             _lastGetNode = current;
 
+            if (_identifier != -1)
+            {
+                int bits = sizeof(Node<DataType>) + sizeof(DataType);
+                LEMEMLOG((long int)(current),bits,_identifier);
+            }
+
             return current;
-        }
-
-        /**
-         * @brief Obtém o elemento na posição especificada da lista.
-         * 
-         * @param index A posição do elemento desejado na lista.
-         * @return O nódulo do elemento na posição especificada.
-        */
-        Node<DataType>* GetNode(int index)
-        {
-            if (index < 0 || index >= _size)
-                throw element_not_found_exception();
-
-            if (_lastGetIndex == -1)
-                return LinearGet(index);
-
-            if (_lastGetIndex == index - 1)
-            {
-                _lastGetIndex = index;
-                _lastGetNode = _lastGetNode->next;
-
-                return _lastGetNode;
-            }
-
-            if (_lastGetIndex == index + 1)
-            {
-                _lastGetIndex = index;
-                _lastGetNode = _lastGetNode->previous;
-
-                return _lastGetNode;
-            }
-            
-            return LinearGet(index);
-        }
-
-        /**
-         * @brief Inverte o conteúdo de dois nódulos.
-         *
-         * @param first O primeiro nó.
-         * @param second O segundo nó.
-         */
-        void InvertNodeContent(Node<DataType>* first, Node<DataType>* second)
-        {
-            if (first == nullptr || second == nullptr)
-                return;
-
-            DataType temp = first->data;
-
-            first->data = second->data;
-            second->data = temp;
-        }
-
-        /**
-         * @brief Troca o conteúdo de um nó.
-         *
-         * @param node O nó a ser atualizado.
-         * @param newData O novo dado.
-         */
-        void SetNodeContent(Node<DataType>* node, DataType newData)
-        {
-            if (node != nullptr)
-                node->data = newData;
         }
 
     public:
@@ -164,8 +111,18 @@ class LinkedList
             _head = nullptr;
             _tail = nullptr;
             _size = 0;
+
+            _identifier = -1;
         };
 
+        LinkedList(int identifier)
+        {
+            _head = nullptr;
+            _tail = nullptr;
+            _size = 0;
+
+            _identifier = identifier;
+        };
 
         /**
          * @brief Destrutor da classe LinkedList.
@@ -223,6 +180,12 @@ class LinkedList
             }
 
             _size++;
+    
+            if (_identifier != -1)
+            {
+                int bits = sizeof(Node<DataType>) + sizeof(DataType);
+                ESCREVEMEMLOG((long int)(newNode), bits, _identifier);
+            }
         }
 
         /**
@@ -284,6 +247,93 @@ class LinkedList
             }
 
             return false;
+        }
+
+        /**
+         * @brief Obtém o elemento na posição especificada da lista.
+         * 
+         * @param index A posição do elemento desejado na lista.
+         * @return O nódulo do elemento na posição especificada.
+        */
+        Node<DataType>* GetNode(int index)
+        {
+            if (index < 0 || index >= _size)
+                throw element_not_found_exception();
+
+            if (_lastGetIndex == -1)
+            {
+                return LinearGet(index);
+            }
+                
+            int bits = sizeof(Node<DataType>) + sizeof(DataType);
+            if (_lastGetIndex == index) 
+            {
+                auto node = _lastGetNode;
+                if (_identifier != -1)
+                    LEMEMLOG((long int)(node),bits,_identifier);
+                return node;
+            }
+
+            if (_lastGetIndex == index - 1)
+            {
+                if (_identifier != -1)
+                    LEMEMLOG((long int)(_lastGetNode),bits,_identifier);
+                
+                _lastGetIndex = index;
+                _lastGetNode = _lastGetNode->next;
+
+                if (_identifier != -1)
+                    LEMEMLOG((long int)(_lastGetNode),bits,_identifier);
+
+                return _lastGetNode;
+            }
+
+            if (_lastGetIndex == index + 1)
+            {
+                if (_identifier != -1)
+                    LEMEMLOG((long int)(_lastGetNode),bits,_identifier);
+                
+                _lastGetIndex = index;
+                _lastGetNode = _lastGetNode->previous;
+
+                if (_identifier != -1)
+                    LEMEMLOG((long int)(_lastGetNode),bits,_identifier);
+
+                return _lastGetNode;
+            }
+            
+            return LinearGet(index);
+        }
+
+        /**
+         * @brief Inverte o conteúdo de dois nódulos.
+         *
+         * @param first O primeiro nó.
+         * @param second O segundo nó.
+         */
+        void InvertNodeContent(Node<DataType>* first, Node<DataType>* second)
+        {
+            if (first == nullptr || second == nullptr)
+                return;
+
+            DataType temp = first->data;
+
+            first->data = second->data;
+            second->data = temp;
+        }
+
+        /**
+         * @brief Troca o conteúdo de um nó.
+         *
+         * @param node O nó a ser atualizado.
+         * @param newData O novo dado.
+         */
+        void SetNodeContent(Node<DataType>* node, DataType newData)
+        {
+            if (node == nullptr)
+                return;
+
+            node->data = newData;
         }
 };
 

@@ -5,7 +5,7 @@ Vertex::Vertex(int id)
     _id = id;
     _color = UNDEFINED_COLOR;
 
-    _adjacentVertices = new LinkedList<Vertex*>();
+    _adjacentVertices = new LinkedList<Vertex*>();//id + 1);
 }
 
 Vertex::~Vertex()
@@ -112,4 +112,19 @@ bool Vertex::IsBiggerThan(Vertex* other)
 bool Vertex::IsLessThan(Vertex* other)
 {
     return !IsBiggerThan(other);
+}
+
+bool Vertex::Equals(Vertex* other)
+{
+    return _id == other->_id;
+}
+
+bool Vertex::IsBiggerThanOrEqual(Vertex* other)
+{
+    return IsBiggerThan(other) || Equals(other);
+}
+
+bool Vertex::IsLessThanOrEqual(Vertex* other)
+{
+    return IsLessThan(other) || Equals(other);
 }

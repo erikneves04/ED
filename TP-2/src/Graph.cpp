@@ -7,7 +7,7 @@
 
 Graph::Graph(char sortOption)
 {
-    _vertices = new LinkedList<Vertex*>();
+    _vertices = new LinkedList<Vertex*>(0);
     _orderer = new GraphOrderer(sortOption);
 }
 
